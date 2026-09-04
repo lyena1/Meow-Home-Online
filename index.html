@@ -2963,26 +2963,37 @@ body.auth-locked .toast-wrap{display:none}
     requireAuthThenBoot();              // 登录墙：校验通过前不加载、不请求账本数据
   }
 
+  function fetchTimeout(url, opts, ms) {
+    // 带超时的 fetch：国内访问 supabase.co 偶发请求长时间挂起，无超时会卡死整个启动链
+    opts = opts || {};
+    if (typeof AbortController !== 'undefined') {
+      var ac = new AbortController();
+      var t = setTimeout(function () { try { ac.abort(); } catch (e) { /* noop */ } }, ms || 8000);
+      opts.signal = ac.signal;
+      return fetch(url, opts).then(function (res) { clearTimeout(t); return res; }, function (e) { clearTimeout(t); throw e; });
+    }
+    return fetch(url, opts);
+  }
   function validateSession(conn) {
-    // 服务端验证会话有效性：拿当前 token 调 Supabase 用户接口，401/网络失败都视为未登录
-    return fetch(conn.url + '/auth/v1/user', {
+    // 服务端验证会话：ok=有效 bad=服务端明确拒绝 net=超时/网络不通（不能当成未登录处理）
+    return fetchTimeout(conn.url + '/auth/v1/user', {
       headers: { 'apikey': conn.key, 'Authorization': 'Bearer ' + conn.token }
-    }).then(function (res) { return res.ok; }).catch(function () { return false; });
+    }, 8000).then(function (res) { return res.ok ? 'ok' : 'bad'; }).catch(function () { return 'net'; });
   }
   function refreshSession(conn) {
-    // 访问令牌（默认 1 小时）过期属正常现象：用长效刷新令牌续期，成功则免去重新输入密码
-    if (!conn.refresh) return Promise.resolve(null);
-    return fetch(conn.url + '/auth/v1/token?grant_type=refresh_token', {
+    // 访问令牌（默认 1 小时）过期属正常：用长效刷新令牌续期；{net:true} 表示网络问题而非凭证失效
+    if (!conn.refresh) return Promise.resolve({ net: true });
+    return fetchTimeout(conn.url + '/auth/v1/token?grant_type=refresh_token', {
       method: 'POST',
       headers: { 'apikey': conn.key, 'Content-Type': 'application/json' },
       body: JSON.stringify({ refresh_token: conn.refresh })
-    }).then(function (res) {
-      if (!res.ok) return null;
+    }, 8000).then(function (res) {
+      if (!res.ok) return { net: false };
       return res.json().then(function (j) {
-        if (!j || !j.access_token) return null;
-        return { token: j.access_token, refresh: j.refresh_token || conn.refresh };
+        if (!j || !j.access_token) return { net: false };
+        return { next: { token: j.access_token, refresh: j.refresh_token || conn.refresh } };
       });
-    }).catch(function () { return null; });
+    }).catch(function () { return { net: true }; });
   }
 
   function requireAuthThenBoot() {
@@ -2992,12 +3003,13 @@ body.auth-locked .toast-wrap{display:none}
       return;
     }
     setSync('loading', '校验登录');
-    validateSession(conn).then(function (ok) {
-      if (ok) { proceedBoot(); return; }
+    validateSession(conn).then(function (st) {
+      if (st === 'ok') { proceedBoot(); return; }
       // 访问令牌失效 ≠ 被踢下线：先用刷新令牌自动续期，续不上才要求重新登录
-      refreshSession(conn).then(function (next) {
-        if (next) { saveConn(next); proceedBoot(); return; }
-        saveConn({ token: '', refresh: '' });   // 刷新令牌也失效，凭证作废
+      refreshSession(conn).then(function (r) {
+        if (r.next) { saveConn(r.next); proceedBoot(); return; }
+        if (r.net) { proceedBoot(); return; }   // 网络抖动 ≠ 凭证失效：带已有令牌继续加载数据，失败由数据层 401 重试或给出明确报错
+        saveConn({ token: '', refresh: '' });   // 服务端明确拒绝且无法续期，凭证作废
         forceLoginWall('登录已过期且无法自动续期，请重新登录后继续使用账本');
       });
     });
@@ -3074,6 +3086,13 @@ body.auth-locked .toast-wrap{display:none}
     $('#saving-month').value = prevMonth(nowMonth());
     bindEvents();
     boot();                             // 同步轮询在 proceedBoot（登录校验通过后）启动
+    // 自动同步：切回页面立即刷新，页面停留期间每 5 分钟刷新一次（已登录且已加载过数据时）
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'visible' && state.loaded && !authWall) reloadAll();
+    });
+    setInterval(function () {
+      if (document.visibilityState === 'visible' && state.loaded && !authWall) reloadAll();
+    }, 5 * 60 * 1000);
   }
 
   if (document.readyState === 'loading') {
