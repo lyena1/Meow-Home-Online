@@ -985,6 +985,19 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
   var db = null;                        // 运行时选定的数据源，统一接口，业务层无感
   var DRIVE = 'local';                  // 'smart'（资料库内置） | 'supabase' | 'local'（本机兜底）
   var SCHEMA_OPTIONS = {};        // { "字段名": [{text,id}] }
+  // 静态内置选项：脚本启动即生效，不依赖网络与 schema 加载顺序。
+  // 线上 schema 加载成功后会覆盖合并（选项以服务端为准）。
+  (function seedStaticSchemaOptions() {
+    var cats = EXPENSE_CATS.slice();
+    INCOME_CATS.forEach(function (c) { if (cats.indexOf(c) === -1) cats.push(c); });
+    var mk = function (arr) { return arr.map(function (t) { return { text: t, id: t }; }); };
+    SCHEMA_OPTIONS['收支类型'] = mk(['收入', '支出']);
+    SCHEMA_OPTIONS['分类'] = mk(cats);
+    SCHEMA_OPTIONS['支出性质'] = mk(['固定支出', '弹性支出', '不计']);
+    SCHEMA_OPTIONS['归属成员'] = mk(MEMBERS.concat(['共同', '猫咪']));
+    SCHEMA_OPTIONS['记录人'] = mk(MEMBERS);
+    SCHEMA_OPTIONS['归属'] = mk(MEMBERS.concat(['家庭']));
+  })();
   var state = {
     rows: [],                     // 流水
     settings: [],                 // 设置行
@@ -3534,6 +3547,7 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
   /* ============ 启动 ============ */
   function boot() {
     clearAlert();
+    fillSelectOptions();                // 选项静态内置，先于一切网络请求填充
     refreshAll();                       // 先渲染界面骨架，不等数据
     restoreFormCache();
 
