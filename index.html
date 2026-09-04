@@ -162,6 +162,16 @@ p{margin:0}
 .field input,.field select,.field textarea{
   min-height:46px;padding:10px 13px;border-radius:13px;border:1.5px solid var(--line);
   background:var(--paper);outline:none;transition:.15s;width:100%;
+  min-width:0;max-width:100%;
+}
+.field input[type="date"]{
+  /* 移动端原生日期控件有固有最小宽度，强制允许收缩，避免窄屏溢出卡片 */
+  min-width:0;max-width:100%;flex:1 1 auto;
+  font-size:15px;padding:10px 10px;
+  text-align:center;text-align-last:center;
+}
+@media (max-width:420px){
+  .field input[type="date"]{font-size:14px;padding:10px 6px}
 }
 .field textarea{min-height:70px;resize:vertical;line-height:1.55}
 .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(123,200,169,.18)}
