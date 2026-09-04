@@ -165,8 +165,9 @@ p{margin:0}
   min-width:0;max-width:100%;
 }
 .field input[type="date"]{
-  /* 移动端原生日期控件有固有最小宽度，强制允许收缩，避免窄屏溢出卡片 */
-  min-width:0;max-width:100%;flex:1 1 auto;
+  /* 核弹级兜底：去掉原生控件外观，彻底消灭其固有最小宽度（点输入框仍会弹出系统日期选择器） */
+  -webkit-appearance:none;appearance:none;
+  min-width:0 !important;max-width:100% !important;width:100% !important;flex:1 1 auto;
   font-size:15px;padding:10px 10px;
   text-align:center;text-align-last:center;
 }
