@@ -320,6 +320,7 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
   position:fixed;inset:0;z-index:120;display:flex;align-items:center;justify-content:center;padding:18px;
   background:rgba(58,48,40,.44);backdrop-filter:blur(3px);
 }
+.modal-backdrop.above-gate{z-index:300}
 .modal-backdrop[hidden]{display:none}
 .modal-card{
   width:100%;max-width:470px;max-height:88vh;overflow:auto;background:var(--paper);
@@ -1570,7 +1571,8 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
           .catch(function (err) {
             console.error('[database] 设置保存失败:', err);
             setSync('error', '保存失败');
-            showAlert('error', '「' + parts[1] + '」没能写回线上数据表，请点重试。', function () { onMemberFieldChange(input); });
+            var msg = String((err && err.message) || err || '').slice(0, 140);
+            showAlert('error', '「' + parts[1] + '」没能写回线上数据表' + (msg ? '：' + msg : '，请点重试。'), function () { onMemberFieldChange(input); });
           });
       });
     });
@@ -3433,7 +3435,9 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
     $('#hh-join').addEventListener('click', submitHouseholdJoin);
     $('#auth-open-connect').addEventListener('click', function (e) {
       e.preventDefault();
-      hideAuthGate();
+      // 不关闭登录墙：弹窗叠在门禁之上，配置完保存后 boot() 会重新校验并回到登录墙
+      var cm = $('#connect-modal');
+      if (cm) cm.classList.add('above-gate');
       openConnect();
     });
 
@@ -3561,6 +3565,13 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
   }
 
   function loadAndRender(st) {
+    // 兜底闸：Supabase 模式下没有登录凭证，一律弹回登录墙，不允许匿名读写
+    if (st === 'supabase' && !(loadConn() || {}).token) {
+      state.offline = true;
+      setSync('offline', '待登录');
+      showAuthGate('login');
+      return;
+    }
     setSync('loading', '读取中');
     Promise.all([
       db.getSchema({ databaseId: 'mTUiqfjLxVrYNdnm7JaBvY' }),
