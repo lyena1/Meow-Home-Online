@@ -822,6 +822,25 @@ body.auth-locked .toast-wrap{display:none}
   var db = null;                        // 运行时选定的数据源，统一接口，业务层无感
   var DRIVE = 'local';                  // 'smart'（资料库内置） | 'supabase' | 'local'（本机兜底）
   var SCHEMA_OPTIONS = {};        // { "字段名": [{text,id}] }
+  var DEFAULT_OPTS = {            // 内置兜底选项：表结构读取失败时下拉栏也不许空
+    '收支类型': ['收入', '支出'],
+    '分类': (function () {
+      var all = EXPENSE_CATS.slice();
+      INCOME_CATS.forEach(function (c) { if (all.indexOf(c) === -1) all.push(c); });
+      return all;
+    })(),
+    '支出性质': ['固定支出', '弹性支出', '不计'],
+    '归属成员': MEMBERS.concat(['共同', '猫咪']),
+    '记录人': MEMBERS.slice(),
+    '归属': MEMBERS.concat(['家庭'])
+  };
+  function schemaOpts(fieldName) {
+    var list = SCHEMA_OPTIONS[fieldName];
+    if (!list || !list.length) {
+      list = (DEFAULT_OPTS[fieldName] || []).map(function (t) { return { text: t, id: t }; });
+    }
+    return list;
+  }
   var state = {
     rows: [],                     // 流水
     settings: [],                 // 设置行
@@ -864,12 +883,12 @@ body.auth-locked .toast-wrap{display:none}
     });
   }
   function optId(fieldName, text) {
-    var list = SCHEMA_OPTIONS[fieldName] || [];
+    var list = schemaOpts(fieldName);
     for (var i = 0; i < list.length; i++) { if (list[i].text === text) return list[i].id; }
     return text;
   }
   function optText(fieldName, id) {
-    var list = SCHEMA_OPTIONS[fieldName] || [];
+    var list = schemaOpts(fieldName);
     for (var i = 0; i < list.length; i++) { if (list[i].id === id) return list[i].text; }
     return id || '';
   }
@@ -2479,7 +2498,7 @@ body.auth-locked .toast-wrap{display:none}
   function fillSelect(sel, fieldName, extraFirst) {
     var el = $(sel);
     if (!el) return;
-    var list = SCHEMA_OPTIONS[fieldName] || [];
+    var list = schemaOpts(fieldName);
     var html = '<option value="">请选择</option>';
     (extraFirst || []).forEach(function (t) { html += '<option value="' + esc(t) + '">' + esc(t) + '</option>'; });
     list.forEach(function (o) { html += '<option value="' + esc(o.id) + '">' + esc(o.text) + '</option>'; });
@@ -2491,7 +2510,7 @@ body.auth-locked .toast-wrap{display:none}
     if (!kindEl || !catEl) return;
     var kindText = optText('收支类型', kindEl.value);
     var wanted = kindText === '收入' ? INCOME_CATS : EXPENSE_CATS;
-    var list = SCHEMA_OPTIONS['分类'] || [];
+    var list = schemaOpts('分类');
     var html = '<option value="">请选择</option>';
     list.forEach(function (o) { if (wanted.indexOf(o.text) !== -1) html += '<option value="' + esc(o.id) + '">' + esc(o.text) + '</option>'; });
     catEl.innerHTML = html;
@@ -2610,7 +2629,7 @@ body.auth-locked .toast-wrap{display:none}
   function syncLedgerCategory() {
     var kindText = optText('收支类型', $('#ledger-kind').value);
     var wanted = kindText === '收入' ? INCOME_CATS : EXPENSE_CATS;
-    var list = SCHEMA_OPTIONS['分类'] || [];
+    var list = schemaOpts('分类');
     var html = '<option value="">请选择</option>';
     list.forEach(function (o) { if (wanted.indexOf(o.text) !== -1) html += '<option value="' + esc(o.id) + '">' + esc(o.text) + '</option>'; });
     $('#ledger-category').innerHTML = html;
@@ -2977,6 +2996,7 @@ body.auth-locked .toast-wrap{display:none}
   function boot() {
     clearAlert();
     hydrateFromCache();                 // 刷新后先用本地缓存即时渲染，随后自动同步覆盖
+    fillSelectOptions();                // 先用内置默认选项填充下拉栏，表结构加载后如有差异再覆盖
     refreshAll();                       // 只渲染界面，不请求任何数据
     restoreFormCache();
     requireAuthThenBoot();              // 登录墙：校验通过前不加载、不请求账本数据
