@@ -322,6 +322,8 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
   background:rgba(58,48,40,.44);backdrop-filter:blur(3px);
 }
 .modal-backdrop[hidden]{display:none}
+body.auth-locked .app-shell,body.auth-locked .tabbar{filter:blur(10px);pointer-events:none;user-select:none}
+body.auth-locked .toast-wrap{display:none}
 .modal-card{
   width:100%;max-width:470px;max-height:88vh;overflow:auto;background:var(--paper);
   border:2px solid var(--line-strong);border-radius:22px;padding:20px;box-shadow:0 20px 50px rgba(58,48,40,.22);
@@ -741,7 +743,7 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
       <button data-page-node-id="3YCfDVQbyt8faeRS4fOaUo" aria-label="关闭" class="modal-close" id="connect-close" type="button"><!--pnid:nKz529C6Ds9lrTQW9VQJHV-->&times;</button>
     </div>
     <p data-page-node-id="RJMN5TIjl9opTbu4tYmFdX" class="modal-note" id="connect-intro"><!--pnid:RthlrMgTZDnTuIBrTMIkDM-->
-      在资料库里打开本页会自动走内置数据表，不用填任何东西。部署到 GitHub Pages 这类静态托管时，内置能力拿不到，需要接一个外部数据库才能读写——填一次就永久生效，配置只存在这台设备的浏览器里。
+      账本已开启登录墙：必须先通过 Supabase 登录校验（密码或下方邮箱验证码）才能加载和同步账本数据——未通过校验前，页面不请求任何账本数据，也不能切「仅本机」。配置只存在这台设备的浏览器里，填一次永久生效。
     </p>
 
     <div data-page-node-id="ztA9E0QBK7rFjrzzk2H1GY" class="conn-field">
@@ -781,7 +783,7 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
         <input data-page-node-id="YhUfo6gHYr9FxReRh4d8aS" id="conn-otp-code" inputmode="numeric" maxlength="6" placeholder="6 位邮箱验证码" type="text">
         <button data-page-node-id="aPLzPSeU2WSiZUlXaqfF6Z" class="otp-btn primary" id="conn-otp-login" type="button"><!--pnid:Awk1JRMoTwpzwN9aYDXGoZ-->验证码登录</button>
       </div>
-      <span data-page-node-id="WHi9wa79Gnt2IILerLQk5h" class="hint"><!--pnid:vz6EsWs3kTo2HbAQnXN02A-->邮箱验证链接打不开、或提示「邮箱未验证」时，用这组最稳：验证码直接发到你邮箱，在本页输入即可，顺便把没验证的邮箱一并激活。</span>
+      <span data-page-node-id="WHi9wa79Gnt2IILerLQk5h" class="hint"><!--pnid:vz6EsWs3kTo2HbAQnXN02A-->邮箱验证链接打不开、或提示「邮箱未验证」时，用这组最稳：验证码直接发到你邮箱，在本页输入即可，顺便把没验证的邮箱一并激活。邮件里的「确认」链接会回跳到本页地址；若点击后仍跳到 localhost，请让管理员在 Supabase 控制台 Authentication → URL Configuration 里，把 Site URL 和 Redirect URLs 都设为本页部署地址（浏览器地址栏里的这个网址），配好前直接用 6 位验证码即可。</span>
     </div>
 
     <div data-page-node-id="cbTrJnw7MloMbi0UStLUBN" class="conn-status" hidden id="conn-status"></div>
@@ -823,6 +825,10 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
   var EXPENSE_CATS = ['吃饭', '交通', '居住', '居家日用', '猫咪', '医疗健康', '娱乐', '人情往来', '订阅服务', '购物', '其他'];
   var INCOME_CATS = ['工资', '奖金', '副业', '理财收益', '其他'];
   var WEEKS_PER_MONTH = 4.345;
+  var REDIRECT_URL = (/^https?:$/.test(location.protocol))
+    ? (location.origin + location.pathname)                       // 独立部署时自动用当前地址作为邮件验证链接的回跳目标
+    : 'https://www.workbuddy.cn/space/d/JUxWIfedUakDrtuSeOLCA8'; // 非独立部署（资料库内打开）时的兜底回跳地址
+  var authWall = false;                 // 登录墙：true 时未通过 Supabase 校验，禁止关闭弹窗/访问数据
 
   /* ============ 状态 ============ */
   var SMART_DB = (window.__SMART_PAGE__ && window.__SMART_PAGE__.database) || null;
@@ -2277,7 +2283,7 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
     var c = otpCommon();
     if (!otpPreflight(c)) return;
     setConnStatus('', '正在发送验证码…');
-    fetch(c.url + '/auth/v1/otp', {
+    fetch(c.url + '/auth/v1/otp?redirect_to=' + encodeURIComponent(REDIRECT_URL), {
       method: 'POST',
       headers: { 'apikey': c.key, 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: c.email, create_user: true })
@@ -2337,6 +2343,7 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
       return testConn(true);
     }).then(function (msg) {
       setConnStatus('ok', '验证码登录成功，' + msg + ' 正在载入数据…');
+      clearAuthWall();
       setTimeout(function () { closeConnect(); reconnect(); }, 400);
     }).catch(function (err) {
       if (!err) return;
@@ -2398,8 +2405,28 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
     m.hidden = false;
   }
   function closeConnect() {
+    if (authWall) return;               // 登录墙激活时禁止关闭，必须先完成登录校验
     var m = $('#connect-modal');
     if (m) m.hidden = true;
+  }
+  function setAuthWall(on) {
+    document.body.classList.toggle('auth-locked', !!on);
+  }
+  function forceLoginWall(msg) {
+    authWall = true;
+    setAuthWall(true);
+    state.offline = true;
+    setSync('offline', '待登录');
+    openConnect();
+    if ($('#connect-close')) $('#connect-close').hidden = true;
+    if ($('#conn-cancel')) $('#conn-cancel').hidden = true;
+    setConnStatus(msg ? 'bad' : '', msg || '');
+  }
+  function clearAuthWall() {
+    authWall = false;
+    setAuthWall(false);
+    if ($('#connect-close')) $('#connect-close').hidden = false;
+    if ($('#conn-cancel')) $('#conn-cancel').hidden = false;
   }
   function testConn(silent) {
     var conn = loadConn() || {};
@@ -2423,6 +2450,7 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
   function submitConnect() {
     var mode = $('#conn-mode') ? $('#conn-mode').value : 'auto';
     if (mode === 'local') {
+      if (authWall) { setConnStatus('bad', '首次使用必须先完成 Supabase 登录校验；登录成功后才能切到仅本机模式'); return; }
       saveConn({ mode: 'local' });
       toast('已切到仅本机模式', 'ok');
       closeConnect();
@@ -2444,6 +2472,7 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
       .then(function () { return testConn(true); })
       .then(function (msg) {
         setConnStatus('ok', '连接成功，' + msg + ' 正在载入数据…');
+        clearAuthWall();
         setTimeout(function () { closeConnect(); reconnect(); }, 400);
       })
       .catch(function (err) { setConnStatus('bad', netErrMsg(err)); });
@@ -3038,13 +3067,39 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
   /* ============ 启动 ============ */
   function boot() {
     clearAlert();
-    refreshAll();                       // 先渲染界面骨架，不等数据
+    refreshAll();                       // 只渲染空界面骨架，不请求任何数据
     restoreFormCache();
+    requireAuthThenBoot();              // 登录墙：校验通过前不加载、不请求账本数据
+  }
 
+  function validateSession(conn) {
+    // 服务端验证会话有效性：拿当前 token 调 Supabase 用户接口，401/网络失败都视为未登录
+    return fetch(conn.url + '/auth/v1/user', {
+      headers: { 'apikey': conn.key, 'Authorization': 'Bearer ' + conn.token }
+    }).then(function (res) { return res.ok; }).catch(function () { return false; });
+  }
+
+  function requireAuthThenBoot() {
+    var conn = loadConn() || {};
+    if (!conn.url || !conn.key || !conn.token) {
+      forceLoginWall(conn.url && conn.key ? '还没有登录：填好配置并完成登录校验后才能使用账本' : '');
+      return;
+    }
+    setSync('loading', '校验登录');
+    validateSession(conn).then(function (ok) {
+      if (ok) { proceedBoot(); return; }
+      saveConn({ token: '', refresh: '' });   // 无效凭证立即作废
+      forceLoginWall('登录状态已过期或无效，请重新登录后继续使用账本');
+    });
+  }
+
+  function proceedBoot() {
+    clearAuthWall();
+    closeConnect();
     var st = resolveDrive();
     lastBootState = st;
     updateConnLabel();
-
+    subscribeUpdates();                 // 同步轮询只在登录校验通过后启动
     if (st === 'need-login') {
       state.offline = true;
       setSync('offline', '待登录');
@@ -3081,7 +3136,7 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
   }
 
   function subscribeUpdates() {
-    if (!db || typeof db.onUpdated !== 'function') return;
+    if (authWall || !db || typeof db.onUpdated !== 'function') return;
     var timer = null;
     db.onUpdated(function (payload) {
       var ids = (payload && payload.databaseIds) || [];
@@ -3108,8 +3163,7 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
     $('#ledger-date').value = todayStr();
     $('#saving-month').value = prevMonth(nowMonth());
     bindEvents();
-    boot();
-    subscribeUpdates();
+    boot();                             // 同步轮询在 proceedBoot（登录校验通过后）启动
   }
 
   if (document.readyState === 'loading') {
