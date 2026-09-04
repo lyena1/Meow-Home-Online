@@ -743,7 +743,7 @@ body.auth-locked .toast-wrap{display:none}
       <button data-page-node-id="3YCfDVQbyt8faeRS4fOaUo" aria-label="关闭" class="modal-close" id="connect-close" type="button"><!--pnid:nKz529C6Ds9lrTQW9VQJHV-->&times;</button>
     </div>
     <p data-page-node-id="RJMN5TIjl9opTbu4tYmFdX" class="modal-note" id="connect-intro"><!--pnid:RthlrMgTZDnTuIBrTMIkDM-->
-      账本已开启登录墙：必须先通过 Supabase 登录校验（密码或下方邮箱验证码）才能加载和同步账本数据——未通过校验前，页面不请求任何账本数据，也不能切「仅本机」。配置只存在这台设备的浏览器里，填一次永久生效。
+      账本已开启登录墙：必须先用管理员发放的账号密码通过 Supabase 登录校验，才能加载和同步账本数据——未通过校验前，页面只显示登录框，不请求任何账本数据。配置只存在这台设备的浏览器里，填一次永久生效。
     </p>
 
     <div data-page-node-id="ztA9E0QBK7rFjrzzk2H1GY" class="conn-field">
@@ -774,16 +774,7 @@ body.auth-locked .toast-wrap{display:none}
         <label data-page-node-id="P0TuHSWoy7V8Q6XJ3q7TJq" for="conn-password"><!--pnid:gi6lQ0e58UtJyfWZ3AqotX-->登录密码</label>
         <input data-page-node-id="nfP9U6O5GJbg5uUUVdJUzW" autocomplete="current-password" id="conn-password" placeholder="只发给 Supabase，不落任何第三方" type="password">
       </div>
-      <div data-page-node-id="sBMpbjjadL9mQR6xYMcQUt" class="otp-divider"><!--pnid:b3nTHWewa84wmNPPvChh75-->邮箱验证码登录（不用点邮件里的链接）</div>
-      <div data-page-node-id="6tpGzb2cAGfViHZYP0vsnS" class="otp-row">
-        <input data-page-node-id="92wHfCwT11BtvsmnyO1hd9" id="conn-otp-email" placeholder="登录邮箱（留空则用上面填的邮箱）" type="email">
-        <button data-page-node-id="h5Ns5SVUvSlsA08nGyuYNQ" class="otp-btn" id="conn-otp-send" type="button"><!--pnid:6jH4CoTY45aaitXKnHrlC3-->发送验证码</button>
-      </div>
-      <div data-page-node-id="GuFkpzQDaahlr9sL4yKLdD" class="otp-row">
-        <input data-page-node-id="YhUfo6gHYr9FxReRh4d8aS" id="conn-otp-code" inputmode="numeric" maxlength="6" placeholder="6 位邮箱验证码" type="text">
-        <button data-page-node-id="aPLzPSeU2WSiZUlXaqfF6Z" class="otp-btn primary" id="conn-otp-login" type="button"><!--pnid:Awk1JRMoTwpzwN9aYDXGoZ-->验证码登录</button>
-      </div>
-      <span data-page-node-id="WHi9wa79Gnt2IILerLQk5h" class="hint"><!--pnid:vz6EsWs3kTo2HbAQnXN02A-->邮箱验证链接打不开、或提示「邮箱未验证」时，用这组最稳：验证码直接发到你邮箱，在本页输入即可，顺便把没验证的邮箱一并激活。邮件里的「确认」链接会回跳到本页地址；若点击后仍跳到 localhost，请让管理员在 Supabase 控制台 Authentication → URL Configuration 里，把 Site URL 和 Redirect URLs 都设为本页部署地址（浏览器地址栏里的这个网址），配好前直接用 6 位验证码即可。</span>
+      <span data-page-node-id="WHi9wa79Gnt2IILerLQk5h" class="hint"><!--pnid:vz6EsWs3kTo2HbAQnXN02A-->账号密码由管理员在 Supabase 控制台统一创建后发给你（邮箱可以是管理员自定的账号名，无需收邮件、无需点任何链接）。输入即登录；提示「邮箱未验证」或「账号不存在」说明账号还没建好，请联系管理员。</span>
     </div>
 
     <div data-page-node-id="cbTrJnw7MloMbi0UStLUBN" class="conn-status" hidden id="conn-status"></div>
@@ -2234,12 +2225,12 @@ body.auth-locked .toast-wrap{display:none}
   function mapAuthErr(msg) {
     var m = String(msg || '');
     if (/not confirmed|email_not_confirmed/i.test(m)) {
-      return '这个邮箱还没完成验证：不用点邮件里的链接，直接点上方「发送验证码」，用验证码登录一次即可激活';
+      return '这个账号还没激活：让管理员到 Supabase 控制台 Authentication → Users 里找到该用户，确认已「Auto Confirm」，或删掉重建一个';
     }
-    if (/invalid login credentials/i.test(m)) return '邮箱或密码不对，检查后再试（新账号也可能是因为邮箱还没验证，可改用验证码登录）';
-    if (/user not found|user does not exist/i.test(m)) return 'Supabase 里还没有这个邮箱的账号：让管理员到 Authentication → Users → Add user 建一个（勾选 Auto Confirm User 可免邮箱验证），再试';
-    if (/signups not allowed/i.test(m)) return '这个 Supabase 项目关闭了新用户注册：让管理员到 Authentication → Sign In / Providers → Email 打开 Allow new users to sign up';
-    if (/rate limit|too many requests/i.test(m)) return '验证码发送太频繁，等一分钟再试';
+    if (/invalid login credentials/i.test(m)) return '账号或密码不对，检查后再试；新账号请先找管理员确认已创建';
+    if (/user not found|user does not exist/i.test(m)) return 'Supabase 里还没有这个账号：让管理员到 Authentication → Users → Add user 建一个（自动已确认，无需邮箱验证），再试';
+    if (/signups not allowed/i.test(m)) return '本账本不开放自助注册：请使用管理员发放的账号密码登录';
+    if (/rate limit|too many requests/i.test(m)) return '尝试太频繁，等一分钟再试';
     return m;
   }
 
@@ -2265,102 +2256,6 @@ body.auth-locked .toast-wrap{display:none}
     });
   }
 
-  /* ---------- 邮箱验证码登录（免点邮件链接） ---------- */
-  function otpCommon() {
-    return {
-      url: String(($('#conn-url') || {}).value || '').trim().replace(/\/+$/, ''),
-      key: String(($('#conn-key') || {}).value || '').trim(),
-      email: String(($('#conn-otp-email') || {}).value || '').trim() || String(($('#conn-email') || {}).value || '').trim()
-    };
-  }
-  function otpPreflight(c) {
-    if (!/^https:\/\/[a-zA-Z0-9.-]+$/.test(c.url)) { setConnStatus('bad', '项目 URL 格式不对，应该长这样：https://abcdefgh.supabase.co'); return false; }
-    if (!c.key) { setConnStatus('bad', 'anon public key 不能为空'); return false; }
-    if (!c.email) { setConnStatus('bad', '先填登录邮箱'); return false; }
-    return true;
-  }
-  function supaSendOtp() {
-    var c = otpCommon();
-    if (!otpPreflight(c)) return;
-    setConnStatus('', '正在发送验证码…');
-    fetch(c.url + '/auth/v1/otp?redirect_to=' + encodeURIComponent(REDIRECT_URL), {
-      method: 'POST',
-      headers: { 'apikey': c.key, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: c.email, create_user: true })
-    }).catch(function (e) { throw new Error(netErrMsg(e)); }).then(function (res) {
-      if (!res.ok) {
-        return res.text().then(function (t) {
-          var msg = t;
-          try { var j = JSON.parse(t); msg = j.error_description || j.message || j.msg || j.hint || t; } catch (e) { /* noop */ }
-          throw new Error('验证码发送失败：' + mapAuthErr(String(msg).slice(0, 200)));
-        });
-      }
-      return res.json().catch(function () { return {}; });
-    }).then(function () {
-      startOtpCountdown();
-      setConnStatus('ok', '验证码已发到 ' + c.email + '（没收到看下垃圾箱，约 1 分钟内到达），填到下面点「验证码登录」');
-      if ($('#conn-otp-code')) $('#conn-otp-code').focus();
-    }).catch(function (err) { setConnStatus('bad', String((err && err.message) || err)); });
-  }
-  function otpVerifyOnce(c, code, type) {
-    return fetch(c.url + '/auth/v1/verify', {
-      method: 'POST',
-      headers: { 'apikey': c.key, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: type, token: code, refresh_token: '' })
-    }).catch(function (e) { throw new Error(netErrMsg(e)); }).then(function (res) {
-      if (!res.ok) {
-        return res.text().then(function (t) {
-          var msg = t;
-          try { var j = JSON.parse(t); msg = j.error_description || j.message || j.msg || j.hint || t; } catch (e) { /* noop */ }
-          var err = new Error(String(msg));
-          err.retryableType = /invalid|expired|token|type|not found|no such/i.test(String(msg));
-          throw err;
-        });
-      }
-      return res.json();
-    });
-  }
-  function supaVerifyOtp() {
-    var c = otpCommon();
-    var code = String(($('#conn-otp-code') || {}).value || '').replace(/\s+/g, '');
-    if (!otpPreflight(c)) return;
-    if (!/^\d{6}$/.test(code)) { setConnStatus('bad', '验证码是 6 位数字，填好再点「验证码登录」'); return; }
-    setConnStatus('', '正在校验验证码…');
-    var types = ['magiclink', 'signup', 'email'];
-    var chain = Promise.reject(null);
-    types.forEach(function (type) {
-      chain = chain.catch(function (prevErr) {
-        if (prevErr && prevErr.retryableType === false) throw prevErr;
-        return otpVerifyOnce(c, code, type).catch(function (err) {
-          err.retryableType = err.retryableType !== false && types.indexOf(type) < types.length - 1;
-          throw err;
-        });
-      });
-    });
-    chain.then(function (j) {
-      if (!j || !j.access_token) throw new Error('验证码校验通过但没拿到凭证，请重试');
-      saveConn({ url: c.url, key: c.key, email: c.email, mode: ($('#conn-mode') || {}).value || 'auto', token: j.access_token, refresh: j.refresh_token || '' });
-      return testConn(true);
-    }).then(function (msg) {
-      setConnStatus('ok', '验证码登录成功，' + msg + ' 正在载入数据…');
-      clearAuthWall();
-      setTimeout(function () { closeConnect(); reconnect(); }, 400);
-    }).catch(function (err) {
-      if (!err) return;
-      setConnStatus('bad', '验证码校验没通过：' + String((err && err.message) || err).slice(0, 200));
-    });
-  }
-  function startOtpCountdown() {
-    var btn = $('#conn-otp-send');
-    if (!btn) return;
-    var left = 60;
-    btn.disabled = true;
-    var t = setInterval(function () {
-      left--;
-      if (left <= 0 || !document.body.contains(btn)) { clearInterval(t); btn.disabled = false; btn.textContent = '发送验证码'; return; }
-      btn.textContent = '已发送(' + left + 's)';
-    }, 1000);
-  }
 
   /* ---------- 连接设置弹窗 ---------- */
   function updateConnLabel() {
@@ -2974,11 +2869,6 @@ body.auth-locked .toast-wrap{display:none}
       testConn()
         .then(function (msg) { setConnStatus('ok', msg); })
         .catch(function (err) { setConnStatus('bad', netErrMsg(err)); });
-    });
-    $('#conn-otp-send').addEventListener('click', supaSendOtp);
-    $('#conn-otp-login').addEventListener('click', supaVerifyOtp);
-    $('#conn-otp-code').addEventListener('keydown', function (e) {
-      if (e.key === 'Enter') supaVerifyOtp();
     });
     $('#connect-modal').addEventListener('click', function (e) {
       if (e.target === $('#connect-modal')) closeConnect();
