@@ -1932,6 +1932,22 @@ body.auth-locked .toast-wrap{display:none}
   ==================================================================== */
   var LS_CONN = 'wb_huzhai_conn_v1';
   var LS_LOCAL = 'wb_huzhai_local_v1';
+  var LS_DATA_CACHE = 'wb_huzhai_datacache_v1';
+  function hydrateFromCache() {
+    // 刷新/重开页面先用上次同步的数据立即渲染，随后自动同步覆盖为最新
+    try {
+      var c = JSON.parse(localStorage.getItem(LS_DATA_CACHE) || 'null');
+      if (c && (c.rows || []).length + (c.settings || []).length > 0) {
+        state.rows = c.rows || [];
+        state.settings = c.settings || [];
+        buildSettingsIndex();
+        state.loaded = true;
+      }
+    } catch (e) { /* 缓存损坏则忽略，等自动同步 */ }
+  }
+  function saveDataCache() {
+    try { localStorage.setItem(LS_DATA_CACHE, JSON.stringify({ rows: state.rows, settings: state.settings })); } catch (e) { /* 超限忽略 */ }
+  }
   var SUPA_TABLE = {
     'mTUiqfjLxVrYNdnm7JaBvY': 'huzhai_ledger',
     'V7eiezQ7mkFmevgdXrap4B': 'huzhai_settings'
@@ -2376,6 +2392,7 @@ body.auth-locked .toast-wrap{display:none}
   function logoutConn() {
     var c = loadConn() || {};
     saveConn({ token: '', refresh: '' });
+    try { localStorage.removeItem(LS_DATA_CACHE); } catch (e) { /* noop */ }   // 退出登录同时清数据缓存，防止下个使用者看到
     toast(c.email ? '已退出登录，可重新登录或改配置' : '已清除连接配置', 'ok');
     closeConnect();
     reconnect();
@@ -2438,6 +2455,7 @@ body.auth-locked .toast-wrap{display:none}
       clearAlert();
       setSync('ok', '已同步');
       refreshAll();
+      saveDataCache();
       return maybeSeed();
     }).catch(function (err) {
       console.error('[database] 读取失败:', err);
@@ -2958,7 +2976,8 @@ body.auth-locked .toast-wrap{display:none}
   /* ============ 启动 ============ */
   function boot() {
     clearAlert();
-    refreshAll();                       // 只渲染空界面骨架，不请求任何数据
+    hydrateFromCache();                 // 刷新后先用本地缓存即时渲染，随后自动同步覆盖
+    refreshAll();                       // 只渲染界面，不请求任何数据
     restoreFormCache();
     requireAuthThenBoot();              // 登录墙：校验通过前不加载、不请求账本数据
   }
