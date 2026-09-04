@@ -1,12 +1,13 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-page-node-id="d6mCFIu0I9Q89bB4nnhmuR">
-<head data-page-node-id="V75vfwHCD2fMVPQZHxDKTo">
-<meta charset="utf-8" data-page-node-id="RhW5M193T1KEu0Ejxdvvgy">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" data-page-node-id="uTmKY6RLTNxAUuG042sYAQ">
-<title>虎宅小账本</title>
-<!-- 本工作台通过 WorkBuddy 资料库能力（library skill）搭建、存储和部署 -->
-<!-- 线上数据表：虎宅流水账 mTUiqfjLxVrYNdnm7JaBvY / 虎宅设置 V7eiezQ7mkFmevgdXrap4B -->
-<style>
+<html data-page-node-id="AtEdaiAEqyksmCl1dbH6Zn" lang="zh-CN">
+<head data-page-node-id="CAZJV16DFtDfnddOLEYLkq">
+<script data-page-node-id="QIuJ9VORNSp3MeqBRrZFiZ" src="/page/page_comm/inject.js"></script>
+<meta data-page-node-id="iYwrT9nQG3oOeghb1czloV" charset="utf-8">
+<meta data-page-node-id="khRqpBBlbLCt7xnol0HPVi" content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
+<title data-page-node-id="XZpEDkweiD0b4h3MPRlxbo" data-pnid-children="7VQfKxPkzAEFQeIBkZUeF5">虎宅小账本</title>
+<!--pnid:2tbwpSZgNHZ26pqejymBbt--><!-- 本工作台通过 WorkBuddy 资料库能力（library skill）搭建、存储和部署 -->
+<!--pnid:cUxqj2SMgtNc1xz0v0QlV4--><!-- 线上数据表：虎宅流水账 mTUiqfjLxVrYNdnm7JaBvY / 虎宅设置 V7eiezQ7mkFmevgdXrap4B -->
+<style data-page-node-id="s5Odyc7BmOl3rTe30xVTjy" data-pnid-children="evMGXpotjhqoIG1GpVI0Tm">
 :root{
   --cream:#FDF8F0; --cream-deep:#F5EBDC; --paper:#FFFDF9; --paper-2:#FFF9F1;
   --mint:#7BC8A9; --mint-deep:#3D8A6E; --mint-pale:#E6F5EE; --mint-line:#BFE6D6;
@@ -320,7 +321,6 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
   position:fixed;inset:0;z-index:120;display:flex;align-items:center;justify-content:center;padding:18px;
   background:rgba(58,48,40,.44);backdrop-filter:blur(3px);
 }
-.modal-backdrop.above-gate{z-index:300}
 .modal-backdrop[hidden]{display:none}
 .modal-card{
   width:100%;max-width:470px;max-height:88vh;overflow:auto;background:var(--paper);
@@ -355,605 +355,449 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
 }
 .conn-status.ok{border-color:var(--mint);background:var(--mint-pale);color:var(--mint-deep)}
 .conn-status.bad{border-color:var(--expense);background:var(--expense-pale);color:#B2402F}
+.otp-divider{
+  display:flex;align-items:center;gap:10px;margin:14px 0 11px;
+  font-size:11.5px;font-weight:700;color:var(--ink-faint);letter-spacing:.5px;
+}
+.otp-divider::before,.otp-divider::after{content:'';flex:1;height:1px;background:var(--line)}
+.otp-row{display:flex;gap:8px;margin-bottom:10px}
+.otp-row input{
+  flex:1;min-width:0;min-height:44px;padding:0 12px;font-size:16px;font-family:inherit;color:var(--ink);
+  background:var(--cream);border:1.5px solid var(--line-strong);border-radius:12px;
+}
+.otp-row input:focus{outline:none;border-color:var(--mint)}
+.otp-btn{
+  flex:0 0 auto;min-height:44px;padding:0 14px;border-radius:12px;font-size:13px;font-weight:800;cursor:pointer;
+  border:1.5px dashed var(--line-strong);background:transparent;color:var(--ink-soft);transition:.16s;
+}
+.otp-btn:hover{border-color:var(--mint);color:var(--mint-deep)}
+.otp-btn.primary{border-style:solid;border-color:var(--mint-deep);background:var(--mint);color:#fff}
+.otp-btn:disabled{opacity:.55;cursor:not-allowed;border-color:var(--line-strong);color:var(--ink-faint);background:var(--cream)}
 .conn-drive{
   display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:800;color:var(--ink-faint);
   margin-top:12px;padding-top:10px;border-top:1px dashed var(--line);
 }
-
-/* ===== 登录 / 注册门禁（AuthGate） ===== */
-.auth-gate{
-  position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;
-  padding:18px;overflow:auto;background:var(--cream);
-  background-image:linear-gradient(rgba(217,200,178,.22) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(217,200,178,.22) 1px,transparent 1px);
-  background-size:26px 26px;
-}
-.auth-gate[hidden]{display:none}
-.auth-card{
-  width:100%;max-width:430px;background:var(--paper);border:2px solid var(--line-strong);
-  border-radius:24px;padding:26px 24px;box-shadow:0 20px 50px rgba(58,48,40,.18);
-}
-.auth-brand{display:flex;align-items:center;gap:12px;margin-bottom:6px}
-.auth-brand .brand-mark{width:52px;height:52px;border-radius:18px;margin:0}
-.auth-brand h1{font-size:21px;letter-spacing:.5px}
-.auth-brand p{font-size:12.5px;color:var(--ink-soft);margin-top:2px}
-.auth-tabs{display:flex;gap:4px;padding:4px;border-radius:14px;background:var(--cream-deep);border:1.5px solid var(--line);margin:16px 0}
-.auth-tabs button{flex:1;min-height:42px;border-radius:11px;font-size:14px;font-weight:800;color:var(--ink-soft)}
-.auth-tabs button.active{background:var(--paper);color:var(--mint-deep);box-shadow:var(--shadow)}
-.auth-form{display:flex;flex-direction:column;gap:11px}
-.auth-form .field label{font-size:12.5px;font-weight:800;color:var(--ink)}
-.auth-form .field input{min-height:46px;padding:10px 13px;font-size:16px;border:1.5px solid var(--line-strong);border-radius:13px;background:var(--cream);width:100%}
-.auth-form .field input:focus{outline:none;border-color:var(--mint)}
-.auth-form .field .hint{font-size:11.5px;color:var(--ink-faint);font-weight:500}
-.auth-actions{display:flex;flex-direction:column;gap:8px;margin-top:4px}
-.auth-actions button{min-height:48px;border-radius:14px;font-size:15px;font-weight:800}
-.auth-actions button.primary{background:var(--mint-deep);color:#fff}
-.auth-actions button.ghost{background:transparent;border:1.5px dashed var(--line-strong);color:var(--ink-soft);font-size:13px}
-.auth-note{font-size:12px;color:var(--ink-soft);line-height:1.6;margin-top:12px;text-align:center}
-.auth-error{
-  display:none;font-size:12.5px;line-height:1.6;padding:10px 12px;border-radius:12px;margin-top:4px;
-  border:1.5px solid #F3C4BC;background:var(--expense-pale);color:#B2402F;
-}
-.auth-error.show{display:block}
-.auth-success{
-  display:none;font-size:12.5px;line-height:1.6;padding:10px 12px;border-radius:12px;margin-top:4px;
-  border:1.5px solid var(--mint-line);background:var(--mint-pale);color:var(--mint-deep);
-}
-.auth-success.show{display:block}
-
-/* 邀请码展示 */
-.invite-code{
-  display:flex;align-items:center;gap:8px;padding:13px 15px;border-radius:15px;
-  background:var(--lemon-pale);border:2px dashed var(--caramel);margin:10px 0;
-}
-.invite-code strong{font-size:20px;letter-spacing:3px;color:var(--caramel);font-variant-numeric:tabular-nums}
-.invite-code button{min-height:40px;padding:0 14px;border-radius:11px;background:#fff;border:1.5px solid var(--caramel);font-size:13px;font-weight:800;color:var(--caramel)}
-.household-options{display:flex;flex-direction:column;gap:12px}
-.household-options .opt{
-  border:1.5px solid var(--line);border-radius:16px;padding:16px;background:var(--paper-2);
-}
-.household-options .opt h4{font-size:14.5px;display:flex;align-items:center;gap:7px;margin-bottom:4px}
-.household-options .opt p{font-size:12.5px;color:var(--ink-soft);margin-bottom:11px;line-height:1.6}
-.household-options .opt input{min-height:44px;padding:0 12px;font-size:16px;border:1.5px solid var(--line-strong);border-radius:12px;background:#fff;width:100%;margin-bottom:10px}
-.household-options .opt input:focus{outline:none;border-color:var(--mint)}
-
-/* 家庭成员列表 */
-.member-list{display:flex;flex-direction:column;gap:8px;margin-top:6px}
-.member-row{display:flex;align-items:center;gap:10px;padding:10px 13px;border-radius:14px;background:var(--paper-2);border:1.5px solid var(--line)}
-.member-row .avatar{
-  width:36px;height:36px;border-radius:50%;display:grid;place-items:center;flex:0 0 auto;
-  background:var(--mint-pale);color:var(--mint-deep);font-weight:800;font-size:14px;border:1.5px solid var(--mint-line);
-}
-.member-row .m-info{min-width:0;flex:1}
-.member-row .m-info strong{display:block;font-size:13.5px;font-weight:700}
-.member-row .m-info span{font-size:11.5px;color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
-.member-row .m-badge{font-size:11px;font-weight:800;padding:3px 9px;border-radius:999px;background:var(--lemon-pale);color:#8A6A12;flex:0 0 auto}
-
-/* 隐私说明 */
-.privacy-list{display:flex;flex-direction:column;gap:10px;margin:6px 0 14px}
-.privacy-item{display:flex;gap:10px;padding:11px 13px;border-radius:14px;background:var(--paper-2);border:1.5px solid var(--line);font-size:12.5px;line-height:1.6;color:var(--ink-soft)}
-.privacy-item .app-icon{color:var(--mint-deep);margin-top:2px}
-.privacy-item strong{color:var(--ink-deep)}
 </style>
 </head>
-<body data-page-node-id="TFYHWBAOftYFqNMDOawa4o">
-<svg class="icon-sprite" aria-hidden="true" data-page-node-id="ckZeklQHMoUm4LG8mUUAcj">
-  <symbol id="i-home" viewBox="0 0 24 24" data-page-node-id="MTWx4rpuFqSbBNqW2d8Dhy"><path d="m4 11 8-7 8 7v9h-6v-6h-4v6H4z" data-page-node-id="wcT1EopkYCC82sw45GrTiO"/></symbol>
-  <symbol id="i-clock" viewBox="0 0 24 24" data-page-node-id="7K6kfavUmDeSsrRk5fvDio"><circle cx="12" cy="12" r="8.5" data-page-node-id="eu6QvJelsIkoP22wBPG7B7"/><path d="M12 7.5v5l3.2 2" data-page-node-id="wsLX9LPsTzvP2t4oUnc6Sp"/></symbol>
-  <symbol id="i-receipt" viewBox="0 0 24 24" data-page-node-id="xpa5sxRq1Gd5v8rMYTZJog"><path d="M6 3.5h12v17l-3-1.8-3 1.8-3-1.8-3 1.8zM9 8h6M9 12h6" data-page-node-id="SQtCmUySs1fzrNsK7DOq3C"/></symbol>
-  <symbol id="i-pig" viewBox="0 0 24 24" data-page-node-id="VVt30j5v0on3i0fAbimGB7"><path d="M5 10.5c0-3.3 3.1-5.5 7.4-5.5 3.7 0 6.6 2 6.6 5v3.5l1.5 1v2h-3l-1 2.5h-2v-2H9v2H7l-1.2-3A5.8 5.8 0 0 1 5 10.5zM5.5 8 3 6.5V11h2M14.5 8.5h.01" data-page-node-id="UNigmNScqafBY8ulV78Byy"/></symbol>
-  <symbol id="i-target" viewBox="0 0 24 24" data-page-node-id="yVvuNUPstWZVLMJSzrWvhY"><circle cx="12" cy="12" r="8.5" data-page-node-id="93e20dNO50d1hl7wDvVnDX"/><circle cx="12" cy="12" r="4.5" data-page-node-id="9KbxmZQuXgxG9iV5NkMctW"/><circle cx="12" cy="12" r="1" data-page-node-id="udYvc14fvEJV2Ex9B6CYdB"/></symbol>
-  <symbol id="i-cat" viewBox="0 0 24 24" data-page-node-id="W7gFAmiTykccNHkBbUsGKt"><path d="M5 9.5 4.2 5l3.6 2.2a8.5 8.5 0 0 1 8.4 0L19.8 5 19 9.5c1.6 1.5 2.5 3.6 2.5 5.8 0 2.4-1 4.4-2.6 5.5-.8-1-2.3-1.6-3.6-1.9l-2.6 1.6h-1.4L8.7 19c-1.3.3-2.8.9-3.6 1.9C3.5 19.7 2.5 17.7 2.5 15.3c0-2.2.9-4.3 2.5-5.8zM9.6 13.2h.01M14.4 13.2h.01" data-page-node-id="g55CcTkwk3yqnVB3yVRg40"/></symbol>
-  <symbol id="i-coin" viewBox="0 0 24 24" data-page-node-id="GB71fECDlLegl16MIYZqPM"><circle cx="12" cy="12" r="8.5" data-page-node-id="hdHCBX8CcReBFuLhLmqF8T"/><path d="M9 9.5c.5-1 1.5-1.5 3-1.5 1.8 0 3 1 3 2.2 0 3-6 1.2-6 4 0 1.2 1.2 2.2 3 2.2 1.5 0 2.6-.5 3-1.5M12 6.5v11" data-page-node-id="wFsSBZ7UCKqBXlsaoBYqTq"/></symbol>
-  <symbol id="i-wallet" viewBox="0 0 24 24" data-page-node-id="bZbp9m2xem15iBNN9pHZBM"><path d="M4 7.5h15a1.5 1.5 0 0 1 1.5 1.5v10H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h12v3.5M16 13h4.5" data-page-node-id="5Aq7f7SrJPKKUjOdGcVAGB"/></symbol>
-  <symbol id="i-spark" viewBox="0 0 24 24" data-page-node-id="T7kGkX3GxBJVEyLoGg95VD"><path d="m12 3 1.7 5.3L19 10l-5.3 1.7L12 17l-1.7-5.3L5 10l5.3-1.7zM18.5 16l.7 2.3 2.3.7-2.3.7-.7 2.3-.7-2.3-2.3-.7 2.3-.7z" data-page-node-id="XbdBzkTB1i9qhbBy7zisbq"/></symbol>
-  <symbol id="i-bus" viewBox="0 0 24 24" data-page-node-id="EfbrBPHY6EvbN33wenR7BV"><rect x="5" y="3.5" width="14" height="16" rx="3" data-page-node-id="8HWGyeEPjkYrepOLH12ErR"/><path d="M5 11h14M8 7h8M8 16h.01M16 16h.01" data-page-node-id="bvrm6zKUic1oy6eBoWy1dP"/></symbol>
-  <symbol id="i-plus" viewBox="0 0 24 24" data-page-node-id="0bgnPau3xhRvcUFiexGLpK"><path d="M12 5v14M5 12h14" data-page-node-id="GEF5gOh6dx6M4vWTi0LJOv"/></symbol>
-  <symbol id="i-trash" viewBox="0 0 24 24" data-page-node-id="4AgEzTIkp7aBvBuie6Lv2A"><path d="M5 7h14M9 7V4h6v3m2 0-1 13H8L7 7m3 4v5m4-5v5" data-page-node-id="tKeVfsYFsfqRLW3N61A90B"/></symbol>
-  <symbol id="i-edit" viewBox="0 0 24 24" data-page-node-id="DwvV5OyT9kO27bQOmLJ37u"><path d="M4 20h4l10-10-4-4L4 16zM14 6l4 4" data-page-node-id="7bBOZgbTJo5AOUmHLn6vGn"/></symbol>
-  <symbol id="i-sync" viewBox="0 0 24 24" data-page-node-id="2ZoG7PRE72Z3ciHIr683hu"><path d="M20 12a8 8 0 0 1-13.7 5.6M4 12a8 8 0 0 1 13.7-5.6M17.5 3.5v4h-4M6.5 20.5v-4h4" data-page-node-id="2b5RYfLUc3yKXVeXGgZ0IM"/></symbol>
-  <symbol id="i-warn" viewBox="0 0 24 24" data-page-node-id="twmgp9HOA5idMcLvGc85YF"><path d="M12 4.5 21 19.5H3zM12 10v4.5M12 17h.01" data-page-node-id="FktH012BeMqXcaSYgtSle4"/></symbol>
-  <symbol id="i-check" viewBox="0 0 24 24" data-page-node-id="escyQ0oJdjkvc0C6bQmfE5"><path d="m5 12.5 4.5 4.5L19 7" data-page-node-id="w5EYSlaVRuRCGybbmB7Fp7"/></symbol>
-  <symbol id="i-down" viewBox="0 0 24 24" data-page-node-id="7nRdPuG9NX9m9jpfkASVBv"><path d="M12 4v11m-4-4 4 4 4-4M5 19h14" data-page-node-id="2xdcyIonAymQby7uPc7tcv"/></symbol>
-  <symbol id="i-up" viewBox="0 0 24 24" data-page-node-id="YOG4e8vqlSmdfYyiirFtGw"><path d="M12 16V5M8 9l4-4 4 4M5 19h14" data-page-node-id="SThKAc7izuP53pZKEBidDR"/></symbol>
-  <symbol id="i-chart" viewBox="0 0 24 24" data-page-node-id="twL0RdqPoSqHNXUclw1kcK"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" data-page-node-id="reDk03fMckCH1zQ0C3FONC"/></symbol>
-  <symbol id="i-house" viewBox="0 0 24 24" data-page-node-id="br0pDDTCwMZwuZ3XoYqiK7"><path d="m4 11 8-7 8 7v9h-6v-6h-4v6H4z" data-page-node-id="FNUB6XQRcToZzbRdDIUuzN"/></symbol>
-  <symbol id="i-bowl" viewBox="0 0 24 24" data-page-node-id="I2iAM1n9enc3R2xFq56gfA"><path d="M4 11h16a8 8 0 0 1-16 0zM8 7c0-1 1-1 1-2M12 7c0-1 1-1 1-2M16 7c0-1 1-1 1-2" data-page-node-id="Mg2OQ7B4m0SLb3G2sADrDg"/></symbol>
-  <symbol id="i-moon" viewBox="0 0 24 24" data-page-node-id="LuiVrsyksmaGHxdE3p692W"><path d="M19.5 15.5A8 8 0 0 1 8.5 4.5a8 8 0 1 0 11 11z" data-page-node-id="H6wnezUloDFZABT7h6HZW7"/></symbol>
-  <symbol id="i-cloud" viewBox="0 0 24 24" data-page-node-id="DIf15b9FIDkWHo48oGpM0D"><path d="M7.5 19h9.5a4 4 0 0 0 .4-8 6 6 0 0 0-11.5 1.5A3.3 3.3 0 0 0 7.5 19z" data-page-node-id="tWw7d6qQDwHLLbYp9XQ3dR"/></symbol>
-  <symbol id="i-key" viewBox="0 0 24 24" data-page-node-id="h4WhxvnShjocoVpygaZFqw"><circle cx="8" cy="12" r="4" data-page-node-id="E3gm2uai6Rdz5cktwXJb4e"/><path d="m11.5 14.5 8 8M17 19.5l2-2M14.5 17l2-2" data-page-node-id="Fw5kV9U9REXudopurawkyH"/></symbol>
+<body data-page-node-id="huOp3bV8bBmeepFsNYtsBO">
+<svg data-page-node-id="ANYk3SpvcTGOzK9S4yi947" aria-hidden="true" class="icon-sprite">
+  <symbol data-page-node-id="smrOHwGfHf3fXnCX3bR5Q3" id="i-home" viewBox="0 0 24 24"><path data-page-node-id="LEE8foNtoVHSjyGOOHv9xP" d="m4 11 8-7 8 7v9h-6v-6h-4v6H4z"/></symbol>
+  <symbol data-page-node-id="g6tHgDxLQmb12ocB3EP9W7" id="i-clock" viewBox="0 0 24 24"><circle data-page-node-id="NOteGvFN86n5bt4WOM5PPN" cx="12" cy="12" r="8.5"/><path data-page-node-id="UscUXMX7lCCUpA8FoD49tz" d="M12 7.5v5l3.2 2"/></symbol>
+  <symbol data-page-node-id="wgVLmKzfZOmp3yPjWFD6UO" id="i-receipt" viewBox="0 0 24 24"><path data-page-node-id="kujRvTS7knIhoJKQFjXsvA" d="M6 3.5h12v17l-3-1.8-3 1.8-3-1.8-3 1.8zM9 8h6M9 12h6"/></symbol>
+  <symbol data-page-node-id="4gjCA1TvxyBarRBYIDBAnY" id="i-pig" viewBox="0 0 24 24"><path data-page-node-id="obJKRyMi5CNoLCvSntQuWx" d="M5 10.5c0-3.3 3.1-5.5 7.4-5.5 3.7 0 6.6 2 6.6 5v3.5l1.5 1v2h-3l-1 2.5h-2v-2H9v2H7l-1.2-3A5.8 5.8 0 0 1 5 10.5zM5.5 8 3 6.5V11h2M14.5 8.5h.01"/></symbol>
+  <symbol data-page-node-id="Tn15ZgYZaMONvu5KwA9MZ6" id="i-target" viewBox="0 0 24 24"><circle data-page-node-id="4JFenFtsQR1DQMHvq7JG9T" cx="12" cy="12" r="8.5"/><circle data-page-node-id="K5bQOZFtPynxjybMMDGjeP" cx="12" cy="12" r="4.5"/><circle data-page-node-id="8QqCIaBtGtNjHkYVZ18hPV" cx="12" cy="12" r="1"/></symbol>
+  <symbol data-page-node-id="Sjvczejo9yxAsUpqitAEsI" id="i-cat" viewBox="0 0 24 24"><path data-page-node-id="LdMhkqUVqPgiwOjCXZn8fQ" d="M5 9.5 4.2 5l3.6 2.2a8.5 8.5 0 0 1 8.4 0L19.8 5 19 9.5c1.6 1.5 2.5 3.6 2.5 5.8 0 2.4-1 4.4-2.6 5.5-.8-1-2.3-1.6-3.6-1.9l-2.6 1.6h-1.4L8.7 19c-1.3.3-2.8.9-3.6 1.9C3.5 19.7 2.5 17.7 2.5 15.3c0-2.2.9-4.3 2.5-5.8zM9.6 13.2h.01M14.4 13.2h.01"/></symbol>
+  <symbol data-page-node-id="8KJniG3Tg1UIbmqMr4vQrr" id="i-coin" viewBox="0 0 24 24"><circle data-page-node-id="H7OGnMoUxekESZPzwOk3lq" cx="12" cy="12" r="8.5"/><path data-page-node-id="Flqlkua8r0e1DbsxTgOE7B" d="M9 9.5c.5-1 1.5-1.5 3-1.5 1.8 0 3 1 3 2.2 0 3-6 1.2-6 4 0 1.2 1.2 2.2 3 2.2 1.5 0 2.6-.5 3-1.5M12 6.5v11"/></symbol>
+  <symbol data-page-node-id="ENenZ7ZLAEbvW5dOcXd5k2" id="i-wallet" viewBox="0 0 24 24"><path data-page-node-id="TuMPZ6J6e2rHduvZn5j66o" d="M4 7.5h15a1.5 1.5 0 0 1 1.5 1.5v10H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h12v3.5M16 13h4.5"/></symbol>
+  <symbol data-page-node-id="OoD1nugnXhdtmQsDcG3Q57" id="i-spark" viewBox="0 0 24 24"><path data-page-node-id="dFomrTH75MI59twemYy526" d="m12 3 1.7 5.3L19 10l-5.3 1.7L12 17l-1.7-5.3L5 10l5.3-1.7zM18.5 16l.7 2.3 2.3.7-2.3.7-.7 2.3-.7-2.3-2.3-.7 2.3-.7z"/></symbol>
+  <symbol data-page-node-id="mUbEwbbCiJh8EttgksKfdJ" id="i-bus" viewBox="0 0 24 24"><rect data-page-node-id="8lEU5TuTw4TLl29nyrxmSa" height="16" rx="3" width="14" x="5" y="3.5"/><path data-page-node-id="CyMRYWoRi2qwDxcrQZDQZm" d="M5 11h14M8 7h8M8 16h.01M16 16h.01"/></symbol>
+  <symbol data-page-node-id="YbE1UfqUM8cBg8spUzc1bO" id="i-plus" viewBox="0 0 24 24"><path data-page-node-id="dEFhxY0EyPlVABWaTcnkrB" d="M12 5v14M5 12h14"/></symbol>
+  <symbol data-page-node-id="Q5uwpd2bcWkxDGo25K5mvJ" id="i-trash" viewBox="0 0 24 24"><path data-page-node-id="nmLm9lBsXQPLNrU7VxhMxi" d="M5 7h14M9 7V4h6v3m2 0-1 13H8L7 7m3 4v5m4-5v5"/></symbol>
+  <symbol data-page-node-id="yQg3nPBf1jAwbQOBE47T2c" id="i-edit" viewBox="0 0 24 24"><path data-page-node-id="kO2hoGEBso2kQYozfIcdqV" d="M4 20h4l10-10-4-4L4 16zM14 6l4 4"/></symbol>
+  <symbol data-page-node-id="LSywtLgNgi9NWO0z2JzJGi" id="i-sync" viewBox="0 0 24 24"><path data-page-node-id="5A3qzCkxoqOr5zQtIKH1ym" d="M20 12a8 8 0 0 1-13.7 5.6M4 12a8 8 0 0 1 13.7-5.6M17.5 3.5v4h-4M6.5 20.5v-4h4"/></symbol>
+  <symbol data-page-node-id="7THuNuivFRILt8aFkRvuEY" id="i-warn" viewBox="0 0 24 24"><path data-page-node-id="Vn10h4vfmNkNXUobuVvIjL" d="M12 4.5 21 19.5H3zM12 10v4.5M12 17h.01"/></symbol>
+  <symbol data-page-node-id="ZaC05Rl73GhsYPfwtz8XNc" id="i-check" viewBox="0 0 24 24"><path data-page-node-id="RwgKIgHGHsmGJFHyqeclBV" d="m5 12.5 4.5 4.5L19 7"/></symbol>
+  <symbol data-page-node-id="9shhiowLr2ABKsbUikQy0Q" id="i-down" viewBox="0 0 24 24"><path data-page-node-id="EpGXuYsvyGIr8lWymPaZCm" d="M12 4v11m-4-4 4 4 4-4M5 19h14"/></symbol>
+  <symbol data-page-node-id="BArVBtlUOvNm1PwiCEXjEF" id="i-up" viewBox="0 0 24 24"><path data-page-node-id="4bFRtuaGwIeSk678OXaNDj" d="M12 16V5M8 9l4-4 4 4M5 19h14"/></symbol>
+  <symbol data-page-node-id="6ILxe0eaBAibWYBxhJCkkw" id="i-chart" viewBox="0 0 24 24"><path data-page-node-id="IXrNNaz5IQHqQkFhxumau6" d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></symbol>
+  <symbol data-page-node-id="Ywn9A3Rcvc2EFJS72TfzuE" id="i-house" viewBox="0 0 24 24"><path data-page-node-id="z6h5j7oZtjsY9ByFpB2t0Z" d="m4 11 8-7 8 7v9h-6v-6h-4v6H4z"/></symbol>
+  <symbol data-page-node-id="tXXiIBkeytPQKyybGPXQXb" id="i-bowl" viewBox="0 0 24 24"><path data-page-node-id="uZLG99vCs9j9DFSxqtOYcu" d="M4 11h16a8 8 0 0 1-16 0zM8 7c0-1 1-1 1-2M12 7c0-1 1-1 1-2M16 7c0-1 1-1 1-2"/></symbol>
+  <symbol data-page-node-id="KsvofoTwDzu3duhVWUbYU1" id="i-moon" viewBox="0 0 24 24"><path data-page-node-id="zH3zsiFfREDNcyKZX1cRK7" d="M19.5 15.5A8 8 0 0 1 8.5 4.5a8 8 0 1 0 11 11z"/></symbol>
+  <symbol data-page-node-id="qm0RqoXqBWBSpWyJ2s1rKa" id="i-cloud" viewBox="0 0 24 24"><path data-page-node-id="1sLbtuXNB3xu0qaAEsK76M" d="M7.5 19h9.5a4 4 0 0 0 .4-8 6 6 0 0 0-11.5 1.5A3.3 3.3 0 0 0 7.5 19z"/></symbol>
+  <symbol data-page-node-id="QwptFPW4sNAs7jRGWIlNat" id="i-key" viewBox="0 0 24 24"><circle data-page-node-id="w6PQ5KXRhkGidHk56FA0KI" cx="8" cy="12" r="4"/><path data-page-node-id="tSbXzdMVaTOtyvWcJkz4iz" d="m11.5 14.5 8 8M17 19.5l2-2M14.5 17l2-2"/></symbol>
 </svg>
 
-<div class="app-shell" data-page-node-id="LbCFOYECi5cwrmx7RXBzY2">
-  <aside class="sidebar" data-page-node-id="mRpkhr60KbaGf0eE6LAQOE">
-    <div class="brand" data-page-node-id="GLHK4qMgLlLgopGZcHjpHx">
-      <div class="brand-mark" data-page-node-id="FXi1wShHDamoJLNwoQjxvG"><svg viewBox="0 0 24 24" class="app-icon lg" data-page-node-id="meI4e1aGj0p4pR6y7JnV1i"><use href="#i-pig" data-page-node-id="2RQ4PD1rH99GA0BfyLtx36"></use></svg></div>
-      <h1 data-page-node-id="UJ6WEqvX3ry2ZXO7d1RWFw">虎宅小账本</h1>
-      <p data-page-node-id="JeJfNUlMpI13G3v2Ade2Ug">c + x + 一只缅因，把钱和时间算明白</p>
+<div data-page-node-id="Y0W4RMCn0cKnS9decGJYpw" class="app-shell">
+  <aside data-page-node-id="vJt22oPpWwo4YOU71A0PKZ" class="sidebar">
+    <div data-page-node-id="MXuNVXRUBCwSiHvw6IsiyN" class="brand">
+      <div data-page-node-id="v2qj88OS2GZ5wmZjJqMlco" class="brand-mark"><svg data-page-node-id="go28bO7ut94qIq27rqQNni" class="app-icon lg" viewBox="0 0 24 24"><use data-page-node-id="tcbC1HPnqb5sOEXmrLHv8U" href="#i-pig"></use></svg></div>
+      <h1 data-page-node-id="a1JV33Kv693rSogLcRezuC"><!--pnid:jG687WiOoSEWIG9ZQ38UVX-->虎宅小账本</h1>
+      <p data-page-node-id="EVQOoFrwyeiQ7KrY9bcbwF"><!--pnid:PwnXzIPEqIe95dzkbHDKYB-->c + x + 一只缅因，把钱和时间算明白</p>
     </div>
-    <nav class="nav-list" id="desktop-nav" data-page-node-id="E0q0SE6CfZ3bVQOuaf6fWs">
-      <button class="nav-button active" type="button" data-target="home" data-page-node-id="fwGKpl0Ce1aytaqzDgy1g7"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="4ZQuFUm8EwTeyLdsGl4UvH"><use href="#i-home" data-page-node-id="tARAhLR5GgtZJtK9pJGiZE"></use></svg><span data-page-node-id="BxvAOQ8FT5Hpb1B5mEqNhb">今天</span></button>
-      <button class="nav-button" type="button" data-target="hourly" data-page-node-id="yFpaLk2FcBCCtT9ipq2nja"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="zzXjjW7vmOqU1cqccaByqx"><use href="#i-clock" data-page-node-id="zegSEaEEyz2XNpyz2COF0Y"></use></svg><span data-page-node-id="U3RtlfTkcrVl47bcoeEgfI">真实时薪</span></button>
-      <button class="nav-button" type="button" data-target="ledger" data-page-node-id="jxh4c7s82HIzvPeQynRfvQ"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="Ia3SReOl1dGpIbhqpycr9j"><use href="#i-receipt" data-page-node-id="E7IlH6PHBG7miEGv8jA2F6"></use></svg><span data-page-node-id="VwoZKgEY7Mia69n5OFQCrf">账本流水</span></button>
-      <button class="nav-button" type="button" data-target="freedom" data-page-node-id="1qVhhhkA1INvxiXrrOcgv0"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="xUGGrTs2W5CmiWSvjYqq2e"><use href="#i-pig" data-page-node-id="R8HemPh7BdLTuO35W6snW9"></use></svg><span data-page-node-id="UvdifoKZoR9bF0YFSaEhem">自由基金</span></button>
+    <nav data-page-node-id="4bGOcDtCp4Y93GjgMR31wp" class="nav-list" id="desktop-nav">
+      <button data-page-node-id="s1h0846sptTjYkoRUyQH6X" class="nav-button active" data-target="home" type="button"><svg data-page-node-id="0Z9iWzYLyJ1vnQs2Y72eVZ" class="app-icon" viewBox="0 0 24 24"><use data-page-node-id="aJ7lkJdF2oLEzeYwDzXG9H" href="#i-home"></use></svg><span data-page-node-id="M5iIXO1k5F3EuKlOW2oGth"><!--pnid:mJrlB1mk6U0GmAUbfV8t8N-->今天</span></button>
+      <button data-page-node-id="UuudVL4UZaVHAyzsxo9F4E" class="nav-button" data-target="hourly" type="button"><svg data-page-node-id="aWSZGOB4ovsDlapDPySzaw" class="app-icon" viewBox="0 0 24 24"><use data-page-node-id="6kogjh4iTQDFD9qkP8n65w" href="#i-clock"></use></svg><span data-page-node-id="Vk6pwW1Fqxb4f7QLM3miEt"><!--pnid:AbJFW3jcJBgOx8L353JX1X-->真实时薪</span></button>
+      <button data-page-node-id="Rr1Xfwl0APKKsAdUJ8elTq" class="nav-button" data-target="ledger" type="button"><svg data-page-node-id="Ac0bf4hufzIsoG88UcBSrK" class="app-icon" viewBox="0 0 24 24"><use data-page-node-id="4PB2cKhtXT4680ro4rn1YT" href="#i-receipt"></use></svg><span data-page-node-id="d4dMpq6wuEv4aclDikk1fm"><!--pnid:bNl7SXAZtxNfb1oitKu33P-->账本流水</span></button>
+      <button data-page-node-id="koxg8PseMo6vyAlN8y9xee" class="nav-button" data-target="freedom" type="button"><svg data-page-node-id="6BD3HGJ6BPKvbLHTgSPlDS" class="app-icon" viewBox="0 0 24 24"><use data-page-node-id="2sH1uY5xdCkxOKe9ZrV0CL" href="#i-pig"></use></svg><span data-page-node-id="qbM3rsHpDGgdPq5gjYIV2D"><!--pnid:RSDtDSAia277dBppQWkzpy-->自由基金</span></button>
     </nav>
-    <div class="sidebar-footer" data-page-node-id="ZQRJdKqGFGB97riIfK3sYZ">
-      <button id="export-button" type="button" data-page-node-id="zCDOG1L443740TdcvHiTSG"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="chkAqh8ZOvj9qoYO4L7APu"><use href="#i-down" data-page-node-id="pFBLVMcVOcqpCvORwPj83f"></use></svg><span data-page-node-id="ssF4sppwbtD2jo9Ta8TNnq">导出 JSON 备份</span></button>
-      <button id="import-button" type="button" data-page-node-id="NLGIyZ7P5Repl6KqmFIPB2"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="DYRnHAb1JD0D5KRHBC8j9r"><use href="#i-up" data-page-node-id="ld6zgD5ge18lCSAzHxjfXn"></use></svg><span data-page-node-id="kCExb0P1IJPByKmNSYGFnV">导入恢复</span></button>
-      <button id="sync-button" type="button" data-page-node-id="eUGGvQWmnD3hD38XJqZrpl"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="8UXjApNz3pfw7ftkgh1L39"><use href="#i-sync" data-page-node-id="rhvt986wVip5R0ye0KKiKU"></use></svg><span data-page-node-id="wyLxA9KRzXELtn6uuBuv5o">立即同步</span></button>
-      <button id="clear-sample-button" class="ghost" type="button" data-page-node-id="dU41CkT7NeLXsYpFjYdSlJ"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="xjzhAEgeALuBmYzRRZtgxk"><use href="#i-trash" data-page-node-id="xENF56RgUOrpAeqtjRoM70"></use></svg><span data-page-node-id="uGym46mcGXJzmPq6lCOQjE">清空示例数据</span></button>
-      <button id="connect-button" class="ghost" type="button" data-page-node-id="Q5msmzacyf63IG05NpMV7G"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="nhLcKGWBdsqNDYcHnrKdLd"><use href="#i-cloud" data-page-node-id="6Hhb2Fi4woOnSObP67J2Rl"></use></svg><span data-page-node-id="Bl7R83Tpy8NEkdv5mwXByY">连接设置</span></button>
-      <button id="family-button" class="ghost" type="button" data-page-node-id="jWdOuDLJoXcPyvQtC8zavh"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="hUkfz8bJOS3FiIrQZ8cF7y"><use href="#i-house" data-page-node-id="ih6YPUmomiZVRz9LBWFvZG"></use></svg><span data-page-node-id="OJM8MUUb9usdvyEO4Pu7Xs">家庭与成员</span></button>
-      <button id="privacy-button" class="ghost" type="button" data-page-node-id="X8wSCrBkECHh4je87tTs3E"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="7EE5qJJp8FYyGUngQGzIc6"><use href="#i-key" data-page-node-id="zvNfGY1F7bGDynqsz6zJMp"></use></svg><span data-page-node-id="S7uleFO6Vve1RgRcNTNwEv">隐私说明</span></button>
-      <input id="import-file" type="file" accept="application/json" hidden data-page-node-id="lt2MJfezyRqO8CVHqTiuVL">
+    <div data-page-node-id="tyeuYu7imwNVAeNrxykwD7" class="sidebar-footer">
+      <button data-page-node-id="OQQGMhcnxXmwPaqlDf57JC" id="export-button" type="button"><svg data-page-node-id="olM6gr9E73pHmGZhdB8cWX" class="app-icon" viewBox="0 0 24 24"><use data-page-node-id="PxI4V7ie3q66IoufLMAQIN" href="#i-down"></use></svg><span data-page-node-id="5oInyJUJXbkdFHpmy7wcYo"><!--pnid:sSgeKCLhvlvSCroezN5Tr4-->导出 JSON 备份</span></button>
+      <button data-page-node-id="ZaQNVe8xUIRRCAnz2y407A" id="import-button" type="button"><svg data-page-node-id="C0rF5LX8VXVKOOp6Tiz8ml" class="app-icon" viewBox="0 0 24 24"><use data-page-node-id="xwKwoKAuIcbr2kpPhRRBRw" href="#i-up"></use></svg><span data-page-node-id="HRTte9wwQniIrTNqJwhcob"><!--pnid:i0EnYbWu6mG7m3oj4KWCQb-->导入恢复</span></button>
+      <button data-page-node-id="lbvwNz4g0Vx5Saupo50t3X" id="sync-button" type="button"><svg data-page-node-id="WW3j86nQS6VfLyepONccf8" class="app-icon" viewBox="0 0 24 24"><use data-page-node-id="17A7fyZ135a4HGgC78Fgxs" href="#i-sync"></use></svg><span data-page-node-id="rYJ4HMxsskWhKsjcsehZJL"><!--pnid:Ij1n1w0x7CA7Tu2aEELTvC-->立即同步</span></button>
+      <button data-page-node-id="Ovs9hE8oSqod31VkDq3SjA" class="ghost" id="clear-sample-button" type="button"><svg data-page-node-id="XqAo5h5Fb0KrzuNnKU6GgD" class="app-icon" viewBox="0 0 24 24"><use data-page-node-id="F6dkhbNIMmNMmdHBDtxm3j" href="#i-trash"></use></svg><span data-page-node-id="J7pNOrrXNEoGRD00tXIORV"><!--pnid:xhxIniQvjntQmPtalamFcP-->清空示例数据</span></button>
+      <button data-page-node-id="ZpKPCBEwT9kRjlOhd2ZEs8" class="ghost" id="connect-button" type="button"><svg data-page-node-id="VfbP3mTRNvHzMKiBecbzx0" class="app-icon" viewBox="0 0 24 24"><use data-page-node-id="9vQp0Xh6pfcypvYT47SOA5" href="#i-cloud"></use></svg><span data-page-node-id="yQbEBiPAtgAZwBO4D0Jab4"><!--pnid:azbvrEzzMPXpBw3w4vfrXE-->连接设置</span></button>
+      <input data-page-node-id="rMhKnGFCSz5A6fGH6AgLbG" accept="application/json" hidden id="import-file" type="file">
     </div>
   </aside>
 
-  <main class="main" data-page-node-id="vxTXP0A37b35W9C3bLJIBV">
-    <header class="topbar" data-page-node-id="tsr5uEBj1fFU9M6jAh61pe">
-      <div data-page-node-id="EgdZ89BD8jH4ZOlkH1AWJ0">
-        <h2 id="page-title" data-page-node-id="VsaYYk0x12okUF6pWLTnv7">今天</h2>
-        <p id="today-label" data-page-node-id="SFmUf3FRzG8udC1K3SXoSf">正在连接线上数据表…</p>
+  <main data-page-node-id="hqhXfxMuLrHq5bJdVxVP6Q" class="main">
+    <header data-page-node-id="U9X7AwoLliUcK0jWAE8iWA" class="topbar">
+      <div data-page-node-id="qT0xfBgrmGWW9h2l949Vvp">
+        <h2 data-page-node-id="NWbmfCoiLnHowjsiDFOULC" id="page-title"><!--pnid:kT0I9Hh37vYObIccOLR8fK-->今天</h2>
+        <p data-page-node-id="iCcQh2rnjv09doWMdcirzj" id="today-label"><!--pnid:p0PmVKuGcSAMMILUK4H9Sd-->正在连接线上数据表…</p>
       </div>
-      <div class="topbar-actions" data-page-node-id="hBuNIJ7QvaNgm1u6aINkUF">
-        <span class="sync-chip loading" id="sync-chip" data-page-node-id="HBmQU5owkQrJttgg39GHOY"><i class="dot" data-page-node-id="l1LzJrg1twAXgg7fB7vGxi"></i><span id="sync-text" data-page-node-id="MIvD1oe1sRCpsYCTod6NOj">连接中</span></span>
-        <button class="btn-retry" id="retry-button" type="button" hidden data-page-node-id="SJSr6FqNGPLLk6ErwTh0Yc">重新连接</button>
+      <div data-page-node-id="pUjb21mS9mnJgbIC5yLbHN" class="topbar-actions">
+        <span data-page-node-id="pcGvhuwt9VMmBNjJN9Kifg" class="sync-chip loading" id="sync-chip"><i data-page-node-id="Jh5IQVbhF1SZf397RBrWHG" class="dot"></i><span data-page-node-id="bT7RbThcQP8R9pkiJETAhF" id="sync-text"><!--pnid:1ePlfXcrxAzSQ8OItqf1F3-->连接中</span></span>
+        <button data-page-node-id="1B7OknAL75SqUYSIZ3aW3R" class="btn-retry" hidden id="retry-button" type="button"><!--pnid:jJsoG5CJm9UnSXqIrrNKe7-->重新连接</button>
       </div>
     </header>
 
-    <div id="alert-slot" data-page-node-id="RjjSs1slji6VSxvdXHs2jP"></div>
-    <div class="mobile-tools" data-page-node-id="wRsqZwxqoaCLQspWATmobj">
-      <button id="mobile-export-button" type="button" data-page-node-id="ErzUt9FZ3cYVNZkJQ5dJJK"><svg viewBox="0 0 24 24" class="app-icon sm" data-page-node-id="HHRkT5n0nnfWpUZxfuhXsT"><use href="#i-down" data-page-node-id="kABnwetx5RS1PbZQzy5sOf"></use></svg><span data-page-node-id="9PFfVQq20VX8VYxNYdTQJV">导出</span></button>
-      <button id="mobile-import-button" type="button" data-page-node-id="pEFSm6rIFb2zsPOuGgYi2x"><svg viewBox="0 0 24 24" class="app-icon sm" data-page-node-id="ghywmwXy9rJ3Gr3aMcWud2"><use href="#i-up" data-page-node-id="M8PEQAqPMXZDRESiqjrHAY"></use></svg><span data-page-node-id="lsfM8XfFwWKKOQUXW0FpJv">导入</span></button>
-      <button id="mobile-sync-button" type="button" data-page-node-id="B1Hr1HdDDC0o9KrlXpoq5K"><svg viewBox="0 0 24 24" class="app-icon sm" data-page-node-id="Ehm3kb10RBXiAYbS6bQt1G"><use href="#i-sync" data-page-node-id="bt7JrkoE4J5S3SmBmQCT0C"></use></svg><span data-page-node-id="CHdEXPq9IizV0ryL5cnNca">同步</span></button>
-      <button id="mobile-connect-button" type="button" data-page-node-id="SPvx4zo6sR3AjHQEpPrwAb"><svg viewBox="0 0 24 24" class="app-icon sm" data-page-node-id="1sahMSOE4bKzAeeB2Yq4PP"><use href="#i-cloud" data-page-node-id="TnDu4puZvuGU2GxdESwuHm"></use></svg><span data-page-node-id="RSwDM9JbMpdarHDIhdF9cZ">连接</span></button>
+    <div data-page-node-id="uRygPGoszUWbfTNRV7FdFN" id="alert-slot"></div>
+    <div data-page-node-id="zMQiWb7DVvIV1CsjAWbjiY" class="mobile-tools">
+      <button data-page-node-id="mkLnzV6LmbzNr0OJx3SwpN" id="mobile-export-button" type="button"><svg data-page-node-id="FxMmPeNaepg7GPIxIuG2PI" class="app-icon sm" viewBox="0 0 24 24"><use data-page-node-id="7qCWWvGql8j5rqR6X8yP2y" href="#i-down"></use></svg><span data-page-node-id="tJNQSAUeVZ2Q7sVKQczOn8"><!--pnid:dRdOHVYKWiE8aw31rGU7db-->导出</span></button>
+      <button data-page-node-id="1V1z3JD4tI56Gj15fZSdpT" id="mobile-import-button" type="button"><svg data-page-node-id="sTi4qyzIPjCWalcNmpdI2B" class="app-icon sm" viewBox="0 0 24 24"><use data-page-node-id="5ENGLLrYsj28su36ybH91O" href="#i-up"></use></svg><span data-page-node-id="chPE57xnVhnZYmAIvvLGbj"><!--pnid:2st4fa5wlOlic9B1hnNoUN-->导入</span></button>
+      <button data-page-node-id="Ag1zn3ODA8fMBA9Ftk3equ" id="mobile-sync-button" type="button"><svg data-page-node-id="5Y9wV31LdtwaTQe33oKdfv" class="app-icon sm" viewBox="0 0 24 24"><use data-page-node-id="Xkgdsxzm0Xi49kShV8pGt2" href="#i-sync"></use></svg><span data-page-node-id="JrmjcXoNimkU2KZL2pALJu"><!--pnid:P1VKXlyP7uEv5E0LfFZcND-->同步</span></button>
+      <button data-page-node-id="95R1ZpIDCflc1y1ueagU0C" id="mobile-connect-button" type="button"><svg data-page-node-id="dWbiqCgOwBVGA81k71bw6o" class="app-icon sm" viewBox="0 0 24 24"><use data-page-node-id="rK9Ro9ek88YEptRoPMBkn5" href="#i-cloud"></use></svg><span data-page-node-id="3sx24hGcNgUmOxa2XLRLP4"><!--pnid:oyXkHjeWj56mGIYZW6JrjV-->连接</span></button>
     </div>
 
-    <!-- ================= 今天 ================= -->
-    <section class="page-section active" data-section="home" data-page-node-id="r0qDXzJRkggU5FhJfiCRAq">
-      <div class="section-heading" data-page-node-id="FM1HsLHM1gDOfEQ0wbnZbD">
-        <div data-page-node-id="ltFz8jkvWQrBeOHekGYXYH">
-          <h2 data-page-node-id="qKCgeDteAwYsgqEe8wBOgV">今天要处理的几件事</h2>
-          <p data-page-node-id="wUUs6XFkAL1EWxUWHuCN4y">昨天没处理完的会自动留在这里，不会凭空消失。数据存在线上，两个人谁先打开谁顺手处理。</p>
+    <!--pnid:bJNurQkwy1k4iDfD3X6dRp--><!-- ================= 今天 ================= -->
+    <section data-page-node-id="JlNabtUDAAZo5xlhv6l56v" class="page-section active" data-section="home">
+      <div data-page-node-id="1YzNddAcOMhD1Td8asl5Ew" class="section-heading">
+        <div data-page-node-id="0ltnfPNdgosXki6IjoHek8">
+          <h2 data-page-node-id="g3bveWxIIh2buJUKMo0S1B"><!--pnid:uzLIXLnWgKc7tuEBrAQqYs-->今天要处理的几件事</h2>
+          <p data-page-node-id="JNEjomt8rnApPmQfMxjYxG"><!--pnid:MfCvToRGYh1q9iUPZn6qOJ-->昨天没处理完的会自动留在这里，不会凭空消失。数据存在线上，两个人谁先打开谁顺手处理。</p>
         </div>
       </div>
 
-      <div class="panel sticker" data-page-node-id="k2qQBTMhwZxEPC56CycnXd">
-        <h3 class="panel-title" data-page-node-id="r0X1jGjcKJEhAmHGkwHO7U"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="4LwPfK00DvCDFSb32fEKev"><use href="#i-check" data-page-node-id="kapHpVtsz20uNjpyaUg8O5"></use></svg><span data-page-node-id="CoKu9i1yG13LVq2lhKFOTU">今天要处理</span></h3>
-        <div class="todo-list" id="todo-list" data-page-node-id="AKhNUG1nJae02Zi4ec28Q3"></div>
+      <div data-page-node-id="EXaLEJnFEBa0r696Ezx7T7" class="panel sticker">
+        <h3 data-page-node-id="gKX0w82kK4tWUAU7tS6Auy" class="panel-title"><svg data-page-node-id="oUclnoym2hwkDkHTKYtfwm" class="app-icon" viewBox="0 0 24 24"><use data-page-node-id="Sec1cvpFQeAEysZ2rFjvHX" href="#i-check"></use></svg><span data-page-node-id="nrk7pDwhcqqGZToCX6wAy1"><!--pnid:9lpAPdcBpC97tzgypg7VhF-->今天要处理</span></h3>
+        <div data-page-node-id="E3aiXvdApbKrk1pUprvHj2" class="todo-list" id="todo-list"></div>
       </div>
 
-      <div class="split" data-page-node-id="Ss67Ap7IPwyMMonExMykxW">
-        <div class="grid" data-page-node-id="pbLDgbf96uhWyiqkBKp2E1">
-          <div class="grid two" data-page-node-id="Teqm6ineoHp5nyqUxGMGOZ">
-            <article class="panel mint" data-page-node-id="ZUwUqn71TRkQzAYfIPwAPe">
-              <div class="kpi-head" data-page-node-id="MNT5KvGZ6tVnEkAfAsqL9X"><div class="kpi-label" data-page-node-id="W3BgNrpk0sD4WD6bibeBPL">家庭真实时薪</div><span class="chip-icon" data-page-node-id="zJwHilVyRSfwTGbWB0YPu2"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="FrgxQmGGzU4LucVRpBtmMf"><use href="#i-clock" data-page-node-id="8EmfhP9MqdFp1Rgwtp9odY"></use></svg></span></div>
-              <div class="kpi-value pos" id="home-family-hourly" data-sp-bindable="database" data-sp-database-id="V7eiezQ7mkFmevgdXrap4B" data-page-node-id="M4ski42maBXOGWXWzCDHqZ">待设置</div>
-              <div class="kpi-note" id="home-family-hourly-note" data-page-node-id="6uEmZ0kxR37ME1pL8LDEhP"></div>
+      <div data-page-node-id="qCW2YulMlVvV6pGxfk24xn" class="split">
+        <div data-page-node-id="51xFH5kycMVXYFRpP1XZmX" class="grid">
+          <div data-page-node-id="07rA4DC34O3nJg6f264r7C" class="grid two">
+            <article data-page-node-id="8UUAfrYfrT8mbD5SJKGmnE" class="panel mint">
+              <div data-page-node-id="zjqoJlCIAwspr07aqhzirU" class="kpi-head"><div data-page-node-id="cZhuegHJIS8Gtkz0SYXAiI" class="kpi-label"><!--pnid:eNdTAgh3JPVDlgLOY1Nvyx-->家庭真实时薪</div><span data-page-node-id="3ErFHt0a2ALXg1TEw4gjOW" class="chip-icon"><svg data-page-node-id="ZghRuhdnarb7Se3HJGEUIs" class="app-icon" viewBox="0 0 24 24"><use data-page-node-id="WWB5CrdiNcGzuB8kjdfDVK" href="#i-clock"></use></svg></span></div>
+              <div data-page-node-id="5Af8oRuSl7odMG1C8jBuKn" class="kpi-value pos" data-sp-bindable="database" data-sp-database-id="V7eiezQ7mkFmevgdXrap4B" id="home-family-hourly"><!--pnid:kylj7Ggmx32TUApZShnSpE-->待设置</div>
+              <div data-page-node-id="NdCK6YtoL6vR5aERKEUtfF" class="kpi-note" id="home-family-hourly-note"></div>
             </article>
-            <article class="panel peach" data-page-node-id="0B5Alnv3D8l373j5M74F8m">
-              <div class="kpi-head" data-page-node-id="Iup6ES1bpXFXkYRSapXTfz"><div class="kpi-label" data-page-node-id="uz2lun256hWm9opTkIs3Ir">本月支出</div><span class="chip-icon" data-page-node-id="y5XTH4bW5UlaAqufMsf6kP"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="llr52sQclxJIyM9cjvGa91"><use href="#i-wallet" data-page-node-id="B58v0HJxn4FJhdhw1dOSjn"></use></svg></span></div>
-              <div class="kpi-value neg" id="home-month-expense" data-sp-bindable="database" data-sp-database-id="mTUiqfjLxVrYNdnm7JaBvY" data-page-node-id="PkODFs8rFMXrXgPfSuhMwk">¥0</div>
-              <div class="kpi-note" id="home-month-expense-note" data-page-node-id="iFQyPjqBSnY7Q9XgjfPF04"></div>
+            <article data-page-node-id="ogyqevyqVNANCUYMgioQug" class="panel peach">
+              <div data-page-node-id="rcjx803qAKntwOTJ3f7NiT" class="kpi-head"><div data-page-node-id="GRqj23Msz0jRZWHfYC71je" class="kpi-label"><!--pnid:rIHa4mS8ZERODOG6xigIZh-->本月支出</div><span data-page-node-id="Yqhh3jhNuSxKz5C9gfzpae" class="chip-icon"><svg data-page-node-id="w2mPrQDkPcKitKbiz14tLz" class="app-icon" viewBox="0 0 24 24"><use data-page-node-id="tJysbjvdZiQKU5Ub6AO6Ko" href="#i-wallet"></use></svg></span></div>
+              <div data-page-node-id="62DgNng55mzxPTfZ96srWk" class="kpi-value neg" data-sp-bindable="database" data-sp-database-id="mTUiqfjLxVrYNdnm7JaBvY" id="home-month-expense"><!--pnid:dXfi73SwNWTCCK28ABH6SG-->¥0</div>
+              <div data-page-node-id="H18ltBVzevf0hmtQUUiNRw" class="kpi-note" id="home-month-expense-note"></div>
             </article>
           </div>
-          <article class="panel lemon" data-page-node-id="hEYxCrBImAAL5EZpCVeUod">
-            <div class="kpi-head" data-page-node-id="r6QMKHO5WiaNHyOCpdv29D"><div class="kpi-label" data-page-node-id="wviH3rdxIwZ5pls8URtgcc">自由基金进度</div><span class="chip-icon" data-page-node-id="pOZsdmHg01Bk0KsrQg7DhP"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="DFHCDsz1NHwOEhcD0CYSZw"><use href="#i-target" data-page-node-id="x1EVvJ0AVVt1287TujJRg0"></use></svg></span></div>
-            <div class="kpi-value pos" id="home-freedom" data-sp-bindable="database" data-sp-database-id="V7eiezQ7mkFmevgdXrap4B" data-page-node-id="BEH6WjfNcFqbCexqLlmxcU">0%</div>
-            <div class="progress-track" data-page-node-id="qOvhfjH6gndXPFUmrwixZ3"><div class="progress-fill" id="home-freedom-bar" style="width:0%" data-page-node-id="UDQutQR28bmwFrfdcQ22rS"></div></div>
-            <p class="kpi-note" id="home-freedom-note" data-page-node-id="UF22zQhTgZ0tvkwaJ8cYMn"></p>
+          <article data-page-node-id="eLaWE7fiA3iPx9rbIxUk8t" class="panel lemon">
+            <div data-page-node-id="PvN1mCTKkuZXyV1eSzkPFa" class="kpi-head"><div data-page-node-id="l1TZywy1dNYaB78WlJWQw0" class="kpi-label"><!--pnid:4apTowiVEiBsH53Xru7xmH-->自由基金进度</div><span data-page-node-id="nLFWdogJKb07AMseUTUTpf" class="chip-icon"><svg data-page-node-id="UT1p8man5Z7xhIUDV3mBbB" class="app-icon" viewBox="0 0 24 24"><use data-page-node-id="WIYhwgx8bdUHLG41BvmV5J" href="#i-target"></use></svg></span></div>
+            <div data-page-node-id="yTchJPag5sUezc7ziHOEsq" class="kpi-value pos" data-sp-bindable="database" data-sp-database-id="V7eiezQ7mkFmevgdXrap4B" id="home-freedom"><!--pnid:DP0Ncg1t6llZ8EBY8sgaVy-->0%</div>
+            <div data-page-node-id="NXO10eWogtSA0bmYrTzhGU" class="progress-track"><div data-page-node-id="4X0kDFStJQlkX306NjBihV" class="progress-fill" id="home-freedom-bar" style="width:0%"></div></div>
+            <p data-page-node-id="mFqq8nnI19xEKuiJi9jzDb" class="kpi-note" id="home-freedom-note"></p>
           </article>
 
-          <section class="panel" data-page-node-id="BMv2FR5AQj0n3RKcEVa85m">
-            <h3 class="panel-title" data-page-node-id="5pZpgbqIgLv0RfGhbtJkdg"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="HcBCLSWFzzjmcsee0BRjS0"><use href="#i-receipt" data-page-node-id="7jo12TMkkRqSA6M5aXNTMf"></use></svg><span data-page-node-id="CKefYUx8nnl9kPI0qc6WUF">最近 4 笔</span>
-              <button class="secondary" type="button" data-goto="ledger" style="margin-left:auto;min-height:34px;font-size:12.5px;padding:0 12px" data-page-node-id="2kmUlBKgIlgygY4x9m1JY7">查看全部</button>
+          <section data-page-node-id="XCilRuMBVGO8WAIok7Wo1S" class="panel">
+            <h3 data-page-node-id="6Y8wVVWgyytFf1VyyWELBb" class="panel-title"><svg data-page-node-id="fpBvOYxZgIJqv4RVe1Wrfv" class="app-icon" viewBox="0 0 24 24"><use data-page-node-id="qZfeN3hMx8sEYTLMbAd5mK" href="#i-receipt"></use></svg><span data-page-node-id="I70anvN6uu28M65ngnIHqU"><!--pnid:VyHAkhOb41MOLmLjUEv76J-->最近 4 笔</span>
+              <button data-page-node-id="vL06o3kIbh39ZgUijPnSSW" class="secondary" data-goto="ledger" type="button" style="margin-left:auto; min-height:34px; font-size:12.5px; padding:0 12px"><!--pnid:WoOvRIHVKYfLZ5CKXcg6cC-->查看全部</button>
             </h3>
-            <div class="record-list" id="home-recent-list" data-page-node-id="56kpwyviq6IRpuroNDDGXR"></div>
+            <div data-page-node-id="Mvid6T92BIlwyPKqGIOj8Z" class="record-list" id="home-recent-list"></div>
           </section>
         </div>
 
-        <aside class="panel sticker" data-page-node-id="jlFAV68271p1C37GshFdZr">
-          <h3 class="panel-title" data-page-node-id="AEvvhckuvlEXPQs9bLaiUm"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="iv7i0E5AHWAHg7ExB4mdDD"><use href="#i-plus" data-page-node-id="zCsOheRbdETWwLCR0FtB7Z"></use></svg><span data-page-node-id="zfSvUqa4kMVj3D1G5D1yYh">10 秒记一笔</span></h3>
-          <form id="quick-form" class="form-grid" novalidate data-page-node-id="m9yNJfPbz8tcYYRmH8ImQe">
-            <div class="field" data-page-node-id="XAwY9xhxm3sZ0a5Mx8PEAX"><label for="quick-amount" data-page-node-id="fexr1yqTYB9z5wBE86c4PC">金额</label><input id="quick-amount" name="amount" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="0.00" required data-page-node-id="txHV9DxSoEO0zcG46MaJoz"></div>
-            <div class="field" data-page-node-id="lwN9xLu1DdcuoGoRMNd9S3"><label for="quick-kind" data-page-node-id="9B6FUynmWTW6wQ4icH281c">收支</label><select id="quick-kind" name="kind" data-page-node-id="iSsO4K9VLhKzWxaCNS0D7s"><option value="" data-page-node-id="PAetNdsiOtwqT4AlaJXBu2">请选择</option></select></div>
-            <div class="field" data-page-node-id="wvZuNZ592kcPcQu5wFtTcr"><label for="quick-category" data-page-node-id="z6Sx7ZTZk6GfdOAECo6hGT">分类</label><select id="quick-category" name="category" data-page-node-id="WsfeFJR8rVR7zbYGztUnLt"><option value="" data-page-node-id="abrZV6pMzy7OOFZaVLPodH">请选择</option></select></div>
-            <div class="field" data-page-node-id="BSEc33dllJUQ2PI0sIQxA1"><label for="quick-owner" data-page-node-id="B2Nk4maG3VcVFivTOggCHE">算在谁头上</label><select id="quick-owner" name="owner" data-page-node-id="xXVvF5dMkoOW68ak6Kblop"><option value="" data-page-node-id="fLHPtZr5y7NyPzuJXcxran">请选择</option></select></div>
-            <div class="field" data-page-node-id="wnRmj9WVxZNHaVwdq202fA"><label for="quick-note" data-page-node-id="YzCGSFpWw62jN1KcvRAae0">随手一句</label><input id="quick-note" name="note" maxlength="120" placeholder="可不填，写一句更有记忆点" data-page-node-id="2Sj4GPw5NV1WXqcZbNRdqh"></div>
-            <div class="field" data-page-node-id="8wCprmVXFxxMQ1Hwi10B6O"><label for="quick-date" data-page-node-id="mWhoF7hILL7u03rMTC6byW">日期</label><input id="quick-date" name="date" type="date" data-page-node-id="POrn19KkkYjoGcANQVTSCC"></div>
-            <button class="primary" type="submit" id="quick-submit" data-page-node-id="EXqKlH2d2J9hP6SPZ8Vkq5">保存并换算成工作时间</button>
+        <aside data-page-node-id="aF43wQ3hEv8PAPN1gC3vlF" class="panel sticker">
+          <h3 data-page-node-id="aorC78KZcRA290rsPtKnYc" class="panel-title"><svg data-page-node-id="mpVvb2y9A48p0885eZocIr" class="app-icon" viewBox="0 0 24 24"><use data-page-node-id="Pd7n8NArmoaUiBmWCAORfm" href="#i-plus"></use></svg><span data-page-node-id="G7hf6HGwkfWtz8xKIvKYfg"><!--pnid:ISrhhJpxEoKaUG8aK6x2bE-->10 秒记一笔</span></h3>
+          <form data-page-node-id="BbSmLluaSRWHlDfFR8x0vo" class="form-grid" id="quick-form" novalidate>
+            <div data-page-node-id="yJZKEDU5DvVpwv6ll1yTPU" class="field"><label data-page-node-id="luTa6c609SjF4nYdiz92al" for="quick-amount"><!--pnid:XcMW897TjMVHD2kG5ygBZv-->金额</label><input data-page-node-id="1Qa0xufUrFbq689tMtNQrX" id="quick-amount" inputmode="decimal" min="0.01" name="amount" placeholder="0.00" required step="0.01" type="number"></div>
+            <div data-page-node-id="H9SJ5AJ0B1FZJqhYwTFkdj" class="field"><label data-page-node-id="CjvARvR2hQQCBou0cISmeV" for="quick-kind"><!--pnid:19qCKfsErXqSPjdSIX0y3l-->收支</label><select data-page-node-id="e8ScxTgTMWXsWuiG7rye2O" id="quick-kind" name="kind"><option data-page-node-id="IsZuJTwAM5tnGvT8fY7c0P" value><!--pnid:s09priHJCwyr8hHGBojQKy-->请选择</option></select></div>
+            <div data-page-node-id="uDO9tqq51pla1YxJaTCJ77" class="field"><label data-page-node-id="6Qw6swYDfwWDSNrxJiQBtR" for="quick-category"><!--pnid:KtaeEdEtSVz2LU5X9M3e7v-->分类</label><select data-page-node-id="uou0a06gdi7TZlULU5bVJn" id="quick-category" name="category"><option data-page-node-id="k7I4I3vIjraNAgQCmw8nVz" value><!--pnid:tyK1Z57e9p9CsdQ6MfVDFJ-->请选择</option></select></div>
+            <div data-page-node-id="8i0Y0c2Ym4UfdjWDfIZMZ3" class="field"><label data-page-node-id="gzQdpi12Hp0ipum9KVIkwS" for="quick-owner"><!--pnid:ivUee9QWb20brFe4xcrfEK-->算在谁头上</label><select data-page-node-id="NaRREDamEKSWnRjDjSzeJl" id="quick-owner" name="owner"><option data-page-node-id="L8MpXM093NWbXHULTLN1Ya" value><!--pnid:wHiT5rztpYcVqAx3vdTmyx-->请选择</option></select></div>
+            <div data-page-node-id="bEuWdr5ptto4ulVLYlEjLQ" class="field"><label data-page-node-id="9g2AE1pNfI5i1OTazXEa9I" for="quick-note"><!--pnid:K13d5TmOBtFFyTgfPMoJ4H-->随手一句</label><input data-page-node-id="CvXkCfQnDvKuKO3QZTEPyA" id="quick-note" maxlength="120" name="note" placeholder="可不填，写一句更有记忆点"></div>
+            <div data-page-node-id="L7im4GOVL0Q9G71dyEtfIA" class="field"><label data-page-node-id="MbyIWAzx63xbocFGkjBpa9" for="quick-date"><!--pnid:0ddPkdxy9Es5gfbeskizDk-->日期</label><input data-page-node-id="BF2vcjQ8IaLCACq8cRcWdj" id="quick-date" name="date" type="date"></div>
+            <button data-page-node-id="G56CoT8FNWXSjDG4MIlag5" class="primary" id="quick-submit" type="submit"><!--pnid:xyLOV7TZjjfmVjQCq58t2A-->保存并换算成工作时间</button>
           </form>
-          <p class="panel-note" id="quick-result" aria-live="polite" data-page-node-id="yWElYrThcz42YUxp1G4Rqm"></p>
+          <p data-page-node-id="AFinxGnCh0gUwTXmCeWwPQ" aria-live="polite" class="panel-note" id="quick-result"></p>
         </aside>
       </div>
 
-      <div class="grid two" data-page-node-id="l4gPp3eFLByR1yJawB70AR">
-        <article class="panel soft" data-page-node-id="OwoCuakVojIWCTirMO9oNI">
-          <h3 class="panel-title" data-page-node-id="VRPc2Q44MNdjrADwHdoRz5"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="hnFggLikceSwMJuxmC3ffZ"><use href="#i-spark" data-page-node-id="cAly44UoF8EWjG1aJ9x2Ce"></use></svg><span data-page-node-id="4O31FWA9o1EZdDWLoE5yOV">这个月的节奏</span></h3>
-          <div id="home-month-stats" data-page-node-id="0gaxLZOHCI9k8rRfFcEstF"></div>
+      <div data-page-node-id="4lmqu5h5gjjWE9kVynoamW" class="grid two">
+        <article data-page-node-id="sSbjjz96YwOuAnlmZjdJD7" class="panel soft">
+          <h3 data-page-node-id="uv8RSM3MdexUV3dTSYFpB1" class="panel-title"><svg data-page-node-id="xYhxko6QhbHbK0emGmKmSo" class="app-icon" viewBox="0 0 24 24"><use data-page-node-id="33qKjmc3D41Hst0b6AdxmQ" href="#i-spark"></use></svg><span data-page-node-id="lpKQm00pFM5RZ5e20rPq9x"><!--pnid:1ZLues6ko7gk0zDnuEgzwv-->这个月的节奏</span></h3>
+          <div data-page-node-id="p96XX8vXzW5amOZaq6R3jM" id="home-month-stats"></div>
         </article>
-        <article class="panel soft" data-page-node-id="bb4P6BWTVLFCXpG2KjDLmL">
-          <h3 class="panel-title" data-page-node-id="Bb4sJkXeod79LHgI6dRsVj"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="XD9wMqERwS4IjjNuAgq2N4"><use href="#i-cat" data-page-node-id="FDkqhjoDGs9YyRFFeBM720"></use></svg><span data-page-node-id="sGwGQ9plHqcJzV4o4Abh10">猫咪专项</span></h3>
-          <div id="home-cat-stats" data-page-node-id="9Af0UmYz0fPDQL7Rf1g0cC"></div>
-          <p class="panel-note" data-page-node-id="zhl5R1AxpbAppgQi9Ujk5Y">缅因猫的开销单列，不混进弹性支出里背锅。</p>
-        </article>
-      </div>
-    </section>
-
-    <!-- ================= 真实时薪 ================= -->
-    <section class="page-section" data-section="hourly" data-page-node-id="0v3GnRAYap3iKd2nxITN37">
-      <div class="section-heading" data-page-node-id="GvrMRnlzwBalbMgFChG7Hj">
-        <div data-page-node-id="PMQxfxJHh10jx7WpOqy5CH">
-          <h2 data-page-node-id="kCd4ooHQa9iHpAbu9N37Nt">真实时薪</h2>
-          <p data-page-node-id="ZCFWvA6CxQfuxLKj0Yh41t">工资条上的数字，和把通勤、加班、工作成本都算进去之后剩下的数字，是两个世界。c 和 x 各算各的，再合起来看这个家。</p>
-        </div>
-        <div class="segmented" id="hourly-view" data-page-node-id="rLv66jAiQ6HTe9g7AzHSp0">
-          <button type="button" class="active" data-view="both" data-page-node-id="oMVzWz0R2tx9nQF7hc6Ko3">两人并排</button>
-          <button type="button" data-view="c" data-page-node-id="Yjhf0X7D9gM5s80YraRFiU">只看 c</button>
-          <button type="button" data-view="x" data-page-node-id="21XBPC80zIZSqfqS3zgcX4">只看 x</button>
-        </div>
-      </div>
-
-      <div class="member-grid" id="member-grid" data-page-node-id="PgDRsvcBQh8IuFbZbinHG7"></div>
-
-      <div class="split-even" data-page-node-id="j2lcqYF6rg7SZmPhteqmDq">
-        <article class="panel" data-page-node-id="ZKoAaY7tZTRNzkeKJziVon">
-          <h3 class="panel-title" data-page-node-id="SrF1yGwZulPeH5zO7QbkVB"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="uJrZviYDBq36XCjbBMzVnO"><use href="#i-chart" data-page-node-id="9IZd966fPkGbptnarfRSM5"></use></svg><span data-page-node-id="LYwrFhiX5BtEmazqgw30Yp">公式摊开看</span></h3>
-          <div class="segmented" id="formula-member" style="margin-bottom:12px" data-page-node-id="pobIRirtc3twl00o0WFNKU">
-            <button type="button" class="active" data-member="c" data-page-node-id="SnNqUJZxFfp1eJJ2XgZdBH">c 的算式</button>
-            <button type="button" data-member="x" data-page-node-id="HY0MDJ8D8rH1qe3qsGgkD2">x 的算式</button>
-            <button type="button" data-member="family" data-page-node-id="yGaEfm123Grkl6w6fwTZ0D">家庭合计</button>
-          </div>
-          <dl class="formula-list" id="formula-list" data-page-node-id="WbVfA2IQFAruq4ObNGP7I8"></dl>
-        </article>
-
-        <article class="panel sticker" data-page-node-id="0W6RNLMUw4FekAYGBtflrH">
-          <h3 class="panel-title" data-page-node-id="bSSrH1Qdi5GRCHsYYXumRM"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="mwGwT0KsCxtepfgh2m06bM"><use href="#i-spark" data-page-node-id="0kytEQoU2G0oZ1x1yAZXWH"></use></svg><span data-page-node-id="72Ow2pGTJq5hg99PO1YHJG">情景模拟</span></h3>
-          <div class="segmented" id="scenario-member" style="margin-bottom:10px" data-page-node-id="dvFpZVHSEA7BHFm3UMLFiN">
-            <button type="button" class="active" data-member="c" data-page-node-id="wZ3z3emOI2j0qtCGRGfyJb">模拟 c</button>
-            <button type="button" data-member="x" data-page-node-id="EGv10ruxWaHZqv1YAAJM57">模拟 x</button>
-          </div>
-          <div class="slider-row" data-page-node-id="XrQH5u6cB0fWRJgn4vYdJC">
-            <div class="slider-head" data-page-node-id="IkKsPQDeDlnXDBAJySqt4z"><span data-page-node-id="hF24IE917SPwHupsv5NJFD">单程通勤变化</span><b id="sc-commute-val" data-page-node-id="cYg7PHCTyPC0EfACHwBeVU">0 分钟</b></div>
-            <input type="range" id="sc-commute" min="-40" max="40" step="5" value="0" data-page-node-id="UuEa1v2QVe307pzmUtbOpw">
-          </div>
-          <div class="slider-row" data-page-node-id="6sIt2WukyCoCv0aXalpUSa">
-            <div class="slider-head" data-page-node-id="DoC1OnC7a5rTKPa41e5J2W"><span data-page-node-id="TVv0cJiMqFDA2RaOPamTnV">每周加班变化</span><b id="sc-overtime-val" data-page-node-id="dMBrP5tcBII3D6zj5x7Vvk">0 小时</b></div>
-            <input type="range" id="sc-overtime" min="-15" max="15" step="1" value="0" data-page-node-id="y8muA1lGWqNKFSflUnC4lD">
-          </div>
-          <div class="slider-row" data-page-node-id="GYkkvErYOgmeHmHUpbsFGF">
-            <div class="slider-head" data-page-node-id="MfQXUKRAT8TRUju2CTChZZ"><span data-page-node-id="2mY3yMqcsrKFLKL9pGOmyP">到手月薪变化</span><b id="sc-raise-val" data-page-node-id="MnUr74aV1AnM43sBVQOkr5">0%</b></div>
-            <input type="range" id="sc-raise" min="-20" max="60" step="1" value="0" data-page-node-id="fyRpk1FnLDyfhEOkr8dFNu">
-          </div>
-          <div class="slider-row" data-page-node-id="PDiDpZb5chaRL2ts6WfZuv">
-            <div class="slider-head" data-page-node-id="LoBK9vxrGfO9WOULFH2me5"><span data-page-node-id="m27lrYUZ0aa4EExb35Nh40">每月工作成本变化</span><b id="sc-cost-val" data-page-node-id="ZpkvB1rMWjCny5tI7pQ7Co">¥0</b></div>
-            <input type="range" id="sc-cost" min="-2000" max="2000" step="100" value="0" data-page-node-id="euqLs510Ce4zuylD4B8YCq">
-          </div>
-          <div style="margin-top:8px" data-page-node-id="LECoW8Iy7H2F90DMOsFdj1">
-            <div class="stat-row" data-page-node-id="RSFJpiTcADqKXwHGEuxQxt"><span data-page-node-id="HWggmkQzAH2XDdGPtPGcZg">现在的真实时薪</span><strong id="sc-base" data-page-node-id="ZWgub0ACmPfjszVZjAT2gw">—</strong></div>
-            <div class="stat-row" data-page-node-id="gpuhd9FlU8HN9c16M2eAzn"><span data-page-node-id="zjwZdiCW4AyKMYahpSp84N">模拟后的真实时薪</span><strong id="sc-next" data-page-node-id="9voDLQAjM6dTVihOplKLHo">—</strong></div>
-            <div class="stat-row" data-page-node-id="sPFIYkklM9oQlgACKkL3rs"><span data-page-node-id="4FQB7ALfoXHqLwuq1F0jEW">时薪变化</span><strong id="sc-delta" data-page-node-id="fosXQIRx6HiWn5MgfbOeVm">—</strong></div>
-            <div class="stat-row" data-page-node-id="0Zl0PD8rv7BPRIEJoiXFQm"><span data-page-node-id="dioJRL7RJ2kUjFNFgxGtHA">一年多/少拿</span><strong id="sc-year" data-page-node-id="PCsBwvFU3KJ4BgU48XjA9b">—</strong></div>
-            <div class="stat-row" data-page-node-id="QfPCtRGJBVKAjPuTDrsAJQ"><span data-page-node-id="i9DrXOGZwCC0yxifQNW6Hm">一年多/少投入</span><strong id="sc-hours" data-page-node-id="rAFwZvYW5IXlPKk7RV9rfG">—</strong></div>
-          </div>
-          <button class="secondary" type="button" id="sc-reset" style="margin-top:12px" data-page-node-id="vsR1mhWlsFgjblzfxg3N1M">复位</button>
-          <p class="panel-note" data-page-node-id="1IzuG8FznDlsr3QrApZeg1">滑块只是推演，不会写回线上数据表。</p>
+        <article data-page-node-id="OFpDYp8lKeLtCWaueHbRzt" class="panel soft">
+          <h3 data-page-node-id="BEuaKpnxxNsArErhjZlr07" class="panel-title"><svg data-page-node-id="P0BWnPAOZMopqvsGejRl2N" class="app-icon" viewBox="0 0 24 24"><use data-page-node-id="y7I0JRqG3hJ8M1I2X8Gq3j" href="#i-cat"></use></svg><span data-page-node-id="TRenVeiSNLbpY8dbOaKzKh"><!--pnid:e9SiJ10VkEo7hbYG9VaFaP-->猫咪专项</span></h3>
+          <div data-page-node-id="8Z2jsIUMOxjnzBSxCQNcr5" id="home-cat-stats"></div>
+          <p data-page-node-id="JZ53gOY6VFJYpi2LcNy98E" class="panel-note"><!--pnid:1roTJQ1ys5CnhPaegqFaNh-->缅因猫的开销单列，不混进弹性支出里背锅。</p>
         </article>
       </div>
     </section>
 
-    <!-- ================= 账本流水 ================= -->
-    <section class="page-section" data-section="ledger" data-page-node-id="mUmsRAGgRwSCHWSU35j04S">
-      <div class="section-heading" data-page-node-id="nXoJBpFnv6kRY5elLNJWxh">
-        <div data-page-node-id="vKmm7rtYSOrjgEITFlFX60">
-          <h2 data-page-node-id="zKDbLP3HVVqQA3AMC4JKQ6">账本流水</h2>
-          <p data-page-node-id="iSkkKkU87RWnzgbTeDyGRU">每一笔都即时写回线上数据表，c 记的 x 立刻能看到，反过来也一样。改一笔、删一笔都是即时生效。</p>
+    <!--pnid:3o7OLax46qGrHtLp6TGiqk--><!-- ================= 真实时薪 ================= -->
+    <section data-page-node-id="NH1BQUUTAllkoT87kj8Uig" class="page-section" data-section="hourly">
+      <div data-page-node-id="BfschukKJvF1lfytOrcL1Q" class="section-heading">
+        <div data-page-node-id="KRpABgNgdqK71YjyNphmGI">
+          <h2 data-page-node-id="XgDMm0GXsljER9AStLXSr0"><!--pnid:AifwBeIMkgbXvmN0TLnaVD-->真实时薪</h2>
+          <p data-page-node-id="40i63RFHvRfNyoanwkZ0MY"><!--pnid:HTIJDobLmBBn9QCGn59QMa-->工资条上的数字，和把通勤、加班、工作成本都算进去之后剩下的数字，是两个世界。c 和 x 各算各的，再合起来看这个家。</p>
         </div>
-        <div class="segmented" id="ledger-filter" data-page-node-id="j8exFGXoPGjnDj6sEuXnGS">
-          <button type="button" class="active" data-owner="全部" data-page-node-id="x5gqnrvvC0emmBlgUVmc2X">全部</button>
-          <button type="button" data-owner="c" data-page-node-id="GZbni7BWGAlhXgrtaCEYFY">c</button>
-          <button type="button" data-owner="x" data-page-node-id="vosKWcDYQDQbHIihwm6XR2">x</button>
-          <button type="button" data-owner="共同" data-page-node-id="eDZJ2KAqdUwO42U346gopz">共同</button>
-          <button type="button" data-owner="猫咪" data-page-node-id="zBzu3iZ20vbDKrgMrrCHe1">猫咪</button>
+        <div data-page-node-id="lZGvLKcCFVhPpEH0UZvBNX" class="segmented" id="hourly-view">
+          <button data-page-node-id="4lZGCz4gEWQOdsUFSghbTQ" class="active" data-view="both" type="button"><!--pnid:FfbwvgAueJZluysU4UZyRu-->两人并排</button>
+          <button data-page-node-id="n4HEdamBB09KIsXlhQAcvy" data-view="c" type="button"><!--pnid:vudl5bf40iTJlF7AGDUdLh-->只看 c</button>
+          <button data-page-node-id="9b2nKEsMOdpFrZqr5QClya" data-view="x" type="button"><!--pnid:oBIpfyHujmNGDtlXasw0Sd-->只看 x</button>
         </div>
       </div>
 
-      <div class="grid four" data-page-node-id="eGTjVjY5iLGLprrV47Mgyl">
-        <article class="panel" data-page-node-id="LXRimBu22GtslCIiwxHSrh"><div class="kpi-label" data-page-node-id="DsltrnKUZeFx9DQlZNCUhO">本月收入</div><div class="kpi-value sm pos" id="ledger-month-income" data-page-node-id="5IBfXOogiDeFYP9ivh1ONB">¥0</div></article>
-        <article class="panel" data-page-node-id="3PfKVKe0HjOpuLedG6i8ii"><div class="kpi-label" data-page-node-id="2UFDCSkidTX9SsSluseFmW">本月固定支出</div><div class="kpi-value sm neg" id="ledger-month-fixed" data-page-node-id="c9XQd9yXCsmOh3ujNKvRQ6">¥0</div></article>
-        <article class="panel" data-page-node-id="PvY4coQ72YTJAwFGEV1Atu"><div class="kpi-label" data-page-node-id="Xe59kKOeIDT0vQjoGSoy5D">本月弹性支出</div><div class="kpi-value sm neg" id="ledger-month-flex" data-page-node-id="kxFoUGHzH2oIM88pTWXZOh">¥0</div></article>
-        <article class="panel" data-page-node-id="AfY2SomtWUUtsFn3a4vLty"><div class="kpi-label" data-page-node-id="AMZEaOL5hYeGcEGWLSScsB">本月结余</div><div class="kpi-value sm" id="ledger-month-net" data-page-node-id="nt5jQo7TOQsOXv3qWEzEmO">¥0</div></article>
-      </div>
+      <div data-page-node-id="9PQdnCdSwUSicEC0T6GUZY" class="member-grid" id="member-grid"></div>
 
-      <div class="split" data-page-node-id="WqMOiDkEHDyERqR0LXUGY3">
-        <article class="panel" data-page-node-id="h6e37iY2vweGp8AdVuzNDf">
-          <div class="kpi-head" style="margin-bottom:12px" data-page-node-id="So9fPerUTgXTmWjuctplri">
-            <h3 class="panel-title" style="margin:0" data-page-node-id="so2MMBv1aeWFpB1FcMrqYI"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="UrDmjwngFUmwG2fJVfI0Eb"><use href="#i-receipt" data-page-node-id="ZkQ5PkLI0tddXkZTQw2HzI"></use></svg><span id="ledger-list-title" data-page-node-id="9Vbydww303XMA1eZHR1FYE">全部流水</span></h3>
-            <div class="segmented" id="ledger-kind-filter" data-page-node-id="0IAUs4K0iH4ba8QaqsAxjj">
-              <button type="button" class="active" data-kind="全部" data-page-node-id="nzMgF62pFBrsJ4eLfFbt43">全部</button>
-              <button type="button" data-kind="支出" data-page-node-id="UwrWw4VdYZ8w81TJPaHG4D">支出</button>
-              <button type="button" data-kind="收入" data-page-node-id="7WHdEDUslP3v34asGTSmdJ">收入</button>
-            </div>
+      <div data-page-node-id="kr5zv7PNzxiqvVzvJ3cqo3" class="split-even">
+        <article data-page-node-id="gkJdeeZ9Nd9IFFYPxw39hC" class="panel">
+          <h3 data-page-node-id="oKj7xcvxpvO3Jykto6E0xM" class="panel-title"><svg data-page-node-id="GyTispq92TZ7HG0ZOhBuLA" class="app-icon" viewBox="0 0 24 24"><use data-page-node-id="lg2cXPwq1Az5K3WfH5SScE" href="#i-chart"></use></svg><span data-page-node-id="bDVh5LvbemY11Z8IvfUBL2"><!--pnid:VPFkgc8fQKMt8mZG6yOHr6-->公式摊开看</span></h3>
+          <div data-page-node-id="UYTFOcUxVAXFhluj1yjm3T" class="segmented" id="formula-member" style="margin-bottom:12px">
+            <button data-page-node-id="i4DQfuvVJzd99B7XZ02N7e" class="active" data-member="c" type="button"><!--pnid:gf01cSt1VjHVpzAzfBMYNX-->c 的算式</button>
+            <button data-page-node-id="6NGxOiYUgEGPj6wT5ECBKy" data-member="x" type="button"><!--pnid:UvesKFUBUgolpZqYCzBWpy-->x 的算式</button>
+            <button data-page-node-id="scSar9hEantMmWIKzIbcyI" data-member="family" type="button"><!--pnid:0T3x9cyxjL7qwbnBy3B9Wp-->家庭合计</button>
           </div>
-          <div class="record-list" id="ledger-list" data-page-node-id="8G6Su98OEu7FmV4AAtxXyp"></div>
+          <dl data-page-node-id="NKVoGugpUFTleguj5DQWpT" class="formula-list" id="formula-list"></dl>
         </article>
 
-        <aside class="panel sticker" data-page-node-id="Drr2otWGLjCnlXbH4rSiVq">
-          <h3 class="panel-title" data-page-node-id="bRkAw1AGtn6iCA7qlrNxQT"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="Pp8A5euligNJon0tbjEOt7"><use href="#i-plus" data-page-node-id="6aqzZ4ioFQlEt5stkeTHKR"></use></svg><span id="ledger-form-title" data-page-node-id="XBoHXG2dDazjTx1Nn5cErH">记一笔</span></h3>
-          <form id="ledger-form" class="form-grid" novalidate data-page-node-id="1G7egEHm7tIJ3U0AI2Oate">
-            <input id="ledger-editing-id" type="hidden" data-page-node-id="etqWRD0sw69tNDbXka5JxV">
-            <div class="field" data-page-node-id="qNrtqSTI1tqTJA9lNHtrwK"><label for="ledger-date" data-page-node-id="hyf1rDZlOPqBjKai4M9xjq">日期</label><input id="ledger-date" name="date" type="date" required data-page-node-id="aBI4nUa8Y8ZMfctgNuOqVq"></div>
-            <div class="field" data-page-node-id="DFAN4k36nTsN9FaZf0TAOR"><label for="ledger-amount" data-page-node-id="01Ad2Ocn7oLK9L4LT1911a">金额</label><input id="ledger-amount" name="amount" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="0.00" required data-page-node-id="VlmE7fIK9ovjuGWXKZzpiz"></div>
-            <div class="field" data-page-node-id="YOW2cBy1ChslDCWozWF9j6"><label for="ledger-kind" data-page-node-id="bnQ1pL2RhIxmIETTFljAQr">收支类型</label><select id="ledger-kind" name="kind" data-page-node-id="XfA6ermrBPZGzrT1foCp6i"><option value="" data-page-node-id="rHgzE5sjOTRGEPElTpBSOI">请选择</option></select></div>
-            <div class="field" data-page-node-id="0qkUtRPysazDTHhAdiXTje"><label for="ledger-category" data-page-node-id="PP5eK96NuyBWQr8eLy6Mpw">分类</label><select id="ledger-category" name="category" data-page-node-id="rBHfdXiiDK9Fk9OmfzGei5"><option value="" data-page-node-id="WfA5WEM6i283bzc4vX7pVa">请选择</option></select></div>
-            <div class="field" data-page-node-id="IEGpjYBQSjmUAWib8Lb7l4"><label for="ledger-nature" data-page-node-id="Q9cp5EKb7f3z36XjTVD6XS">支出性质</label><select id="ledger-nature" name="nature" data-page-node-id="xDCLULYK3IpCUEp2C15qLN"><option value="" data-page-node-id="R4zBy04YmMpBm8JhJMdZ40">请选择</option></select></div>
-            <div class="field" data-page-node-id="uLwHkG5MKhdgmVcA3DqDgP"><label for="ledger-owner" data-page-node-id="BKzNiZj3oBe2VyC1LykdCf">归属成员</label><select id="ledger-owner" name="owner" data-page-node-id="vfVZ5yfEPHOMWmIsDo2tO6"><option value="" data-page-node-id="KLb6uofMunEaHOBDVJwd3K">请选择</option></select></div>
-            <div class="field" data-page-node-id="N2Uf2AILfGUDUg8dZ3abTA"><label for="ledger-recorder" data-page-node-id="TrOw45lQ4J6SIfJ9fXAeQw">谁记的</label><select id="ledger-recorder" name="recorder" data-page-node-id="44oKxkqDDr9caEjKAGu4Nm"><option value="" data-page-node-id="FLakTicTLClaTl6noP16eP">请选择</option></select></div>
-            <div class="field span-full" data-page-node-id="gRR7HjWt7lC8V0H0Z1MF16"><label for="ledger-note" data-page-node-id="VeGaMkDqQ3eXHma9RsdvdT">备注</label><input id="ledger-note" name="note" maxlength="120" placeholder="这笔花在什么上" data-page-node-id="Q7kGq5rjYpImL3DawNUqYu"></div>
-            <div class="form-actions span-full" data-page-node-id="yRK6FPI49rx62VhTV3otGi">
-              <button class="primary" type="submit" id="ledger-submit" data-page-node-id="ik12p7EkblwIDKsDW93c9H">保存</button>
-              <button class="secondary" type="button" id="ledger-cancel" hidden data-page-node-id="5fuRALYSRekx69nP8AhFde">取消编辑</button>
+        <article data-page-node-id="JthCYk2VrsJ7xGW0qXzGFW" class="panel sticker">
+          <h3 data-page-node-id="a5K5bfdBZW1RuvbkpZDAmc" class="panel-title"><svg data-page-node-id="mEwdQERuInryRWRYXsk2NZ" class="app-icon" viewBox="0 0 24 24"><use data-page-node-id="nXn2y0TBvafwScwRNchs3A" href="#i-spark"></use></svg><span data-page-node-id="krtLtKsYQmPZFKpxm10mD5"><!--pnid:Julyie8jZ1g69zj4HE5voC-->情景模拟</span></h3>
+          <div data-page-node-id="xPS6I3hd4PIWWVvb3A8FeA" class="segmented" id="scenario-member" style="margin-bottom:10px">
+            <button data-page-node-id="pI8iERbOaiRw65Vx1YRQfl" class="active" data-member="c" type="button"><!--pnid:sUL4ZjKdE6dKkuyJ6JUhZk-->模拟 c</button>
+            <button data-page-node-id="43OxK6UPDBsiZzzo2Yijwy" data-member="x" type="button"><!--pnid:gILDdtljbf93bnQ5GGEUTB-->模拟 x</button>
+          </div>
+          <div data-page-node-id="Jpw4P0G2dZjN7AVGuwYUuh" class="slider-row">
+            <div data-page-node-id="4z9FOtCj2kxB58y9UeMuSy" class="slider-head"><span data-page-node-id="UerxdAzFbK8eCafR8C5SvW"><!--pnid:2UUWY9KisNgaFFizhPOdxt-->单程通勤变化</span><b data-page-node-id="o9zGBoWUOWVCToOPF1SqOt" id="sc-commute-val"><!--pnid:KdSLgSCdFCz4KIQ2mTIn2B-->0 分钟</b></div>
+            <input data-page-node-id="dyHTYTH6kzh2tMLfBCyGOB" id="sc-commute" max="40" min="-40" step="5" type="range" value="0">
+          </div>
+          <div data-page-node-id="r6TcTwdZAWw0oUTnM6LhQM" class="slider-row">
+            <div data-page-node-id="TgO1pQgXyMA0o7MxNR1QuP" class="slider-head"><span data-page-node-id="fAIEdHxZYPeDA0JUV3PrgG"><!--pnid:2cGfovFLr4IbdDbE7r65J5-->每周加班变化</span><b data-page-node-id="BmO23FmlPLzc2kqXn8CjOb" id="sc-overtime-val"><!--pnid:DWiGWU3225fAKWA6yxtKb4-->0 小时</b></div>
+            <input data-page-node-id="FSX5OdUUo4H0Gx0fikNteI" id="sc-overtime" max="15" min="-15" step="1" type="range" value="0">
+          </div>
+          <div data-page-node-id="0Ts6iwI3uIGNvgq8BfPUEd" class="slider-row">
+            <div data-page-node-id="kOuph1PXiomKW4oMqKFi7S" class="slider-head"><span data-page-node-id="K2DZuQzFHQqa4oklM8p30C"><!--pnid:9Ype2WhTn89DjkD9lNvLaF-->到手月薪变化</span><b data-page-node-id="BrVoc1DwM2LYIR10LAjEgI" id="sc-raise-val"><!--pnid:nHjo63aQbWoFOLzn56CyxL-->0%</b></div>
+            <input data-page-node-id="8sAmK7JrwZ82j0LwxQrOhv" id="sc-raise" max="60" min="-20" step="1" type="range" value="0">
+          </div>
+          <div data-page-node-id="zymzCWRx1CHjj9NaK7zbW7" class="slider-row">
+            <div data-page-node-id="CKeauSg2gRXu92jHXWegSQ" class="slider-head"><span data-page-node-id="ZaCQVOPjbviD1zgrFhTonH"><!--pnid:GG9UdleNA3oxhrvbXhMKIe-->每月工作成本变化</span><b data-page-node-id="fvkNmhS4krZLscEa57b9CG" id="sc-cost-val"><!--pnid:iNQlaHU73rTHhoI2qFJasa-->¥0</b></div>
+            <input data-page-node-id="geUzQKn6e5CNlamQx9QJO8" id="sc-cost" max="2000" min="-2000" step="100" type="range" value="0">
+          </div>
+          <div data-page-node-id="VjLtRmB0Do0CMA3nReBPVZ" style="margin-top:8px">
+            <div data-page-node-id="OQ5L0k4q3pfvZli5npIowC" class="stat-row"><span data-page-node-id="1Lu3jlT1FnffoM6RJvSk6r"><!--pnid:feCYsadm7N0Urkks5RUXBR-->现在的真实时薪</span><strong data-page-node-id="rXrYJDOwTAzE6xutVuqbqa" id="sc-base"><!--pnid:wjuagzsYt2uE5ccYG899iQ-->—</strong></div>
+            <div data-page-node-id="HwdADE92eRfIP9tyfdJPio" class="stat-row"><span data-page-node-id="ZRfQiOviUmzEjYg7lROBh2"><!--pnid:wIsb8Qpmmtg5QFolgQhyYh-->模拟后的真实时薪</span><strong data-page-node-id="75HKVSVCXBz2ZeWEBkQQbE" id="sc-next"><!--pnid:6MAkKy1q4a9eObx5n3BZyE-->—</strong></div>
+            <div data-page-node-id="nTKpdpLrDgJQeAVYU6MA6w" class="stat-row"><span data-page-node-id="mlEoKU094BVkTn3ay2FKRh"><!--pnid:GzLcdN59ny59mXDWF3j9FZ-->时薪变化</span><strong data-page-node-id="0yG61sLK1SqBkYplvI0sEr" id="sc-delta"><!--pnid:3COP4JixkIUJItYSLsbOsF-->—</strong></div>
+            <div data-page-node-id="xXJuTlDdj81G3uWpiOQ5Ug" class="stat-row"><span data-page-node-id="QtD6cGi5FJCiGpCVRP605l"><!--pnid:qK2Y4k3fAHnv2t2JO4WM6l-->一年多/少拿</span><strong data-page-node-id="6dmO964ofDJthsw82jGBxF" id="sc-year"><!--pnid:ZPJigbZT5Lh8z4qrKsJcl7-->—</strong></div>
+            <div data-page-node-id="t7iMXo8ZYNlpE9K7ZW2RZW" class="stat-row"><span data-page-node-id="ELCLrr1h5vG1gM43WCDJxk"><!--pnid:vq47tglv9R4T0cnOJpIcbm-->一年多/少投入</span><strong data-page-node-id="C2TdnPGgbpEOfxg78rbCbE" id="sc-hours"><!--pnid:hnGIOPhycpkFeq9VYe9ruk-->—</strong></div>
+          </div>
+          <button data-page-node-id="zXFfA7HILlSydb9JskHRyk" class="secondary" id="sc-reset" type="button" style="margin-top:12px"><!--pnid:aST3AyzfRnqbT4xCBGZRpM-->复位</button>
+          <p data-page-node-id="4eStcsHuMAOV8ILvAJILLZ" class="panel-note"><!--pnid:I7TwnjmaHo2RQWUDFhVY1v-->滑块只是推演，不会写回线上数据表。</p>
+        </article>
+      </div>
+    </section>
+
+    <!--pnid:U7hE1OOkiLUwJMqjGVsrEx--><!-- ================= 账本流水 ================= -->
+    <section data-page-node-id="0yD22Cei8kWiiW6jdg0EG2" class="page-section" data-section="ledger">
+      <div data-page-node-id="91UGIiscEZDJUcpvA727k1" class="section-heading">
+        <div data-page-node-id="44tnit8dqAxbKM9wi5t2ns">
+          <h2 data-page-node-id="uWF2S28tBQGAK8BTgTLKDp"><!--pnid:zaZsojkU8ZKPcavAEYrF3O-->账本流水</h2>
+          <p data-page-node-id="y1ednRcHeimbp3pC7A1R2Y"><!--pnid:8D1SkqP5tPSo5oJJoj76Ff-->每一笔都即时写回线上数据表，c 记的 x 立刻能看到，反过来也一样。改一笔、删一笔都是即时生效。</p>
+        </div>
+        <div data-page-node-id="QHHOamRsh0mwHjRRBbFGkl" class="segmented" id="ledger-filter">
+          <button data-page-node-id="pduXGxtv2zbIU7JTRHXlPf" class="active" data-owner="全部" type="button"><!--pnid:nhT6s8iLoOdBG9RVNvp4BE-->全部</button>
+          <button data-page-node-id="qHrXX7DjnGCO9ycVrLBOrh" data-owner="c" type="button"><!--pnid:EqTnFkWS3bzyip6cuVduXE-->c</button>
+          <button data-page-node-id="eZDgVb6Fuv5w95gpd8Qlz3" data-owner="x" type="button"><!--pnid:fAa0n7kjvn6QB0gfMJPrhr-->x</button>
+          <button data-page-node-id="Y2HHGGHJ59gKJorg6oBzDD" data-owner="共同" type="button"><!--pnid:PgrkPVOf0aJFD4KjIgUXAI-->共同</button>
+          <button data-page-node-id="dc1aPN1FvK1tjZuw3CrXKk" data-owner="猫咪" type="button"><!--pnid:k5t8mTNb4P83B2vJF8JIzd-->猫咪</button>
+        </div>
+      </div>
+
+      <div data-page-node-id="rKMGm17JXL9RozNuNDtID2" class="grid four">
+        <article data-page-node-id="7KqhpGpDLGW3jc1nj85HYM" class="panel"><div data-page-node-id="lzSgjhCe6dYZ1PEFV2f9we" class="kpi-label"><!--pnid:Vb5gMgnBbhliYqZ5PuChNN-->本月收入</div><div data-page-node-id="Lb8LTAWwgRPeFwGkpJZWqR" class="kpi-value sm pos" id="ledger-month-income"><!--pnid:4ERfNZKEVwDRSNwmX69B4h-->¥0</div></article>
+        <article data-page-node-id="oky37SDLBloc1VqaNYCGxF" class="panel"><div data-page-node-id="pVCYBumYzZ5CPCvOgH2ubW" class="kpi-label"><!--pnid:zi430eTAofsZlakDS8TjwS-->本月固定支出</div><div data-page-node-id="icUulD52yVCkD7xQCW0Vjc" class="kpi-value sm neg" id="ledger-month-fixed"><!--pnid:jGwBVrWN1R59ROuetTkv0o-->¥0</div></article>
+        <article data-page-node-id="TrpFca8Iti5x3UykV9RtTr" class="panel"><div data-page-node-id="UczRVWaOi1V6ebddroQgpi" class="kpi-label"><!--pnid:EEcpWpNVEN9K04MkeR2Xko-->本月弹性支出</div><div data-page-node-id="w5ppkuIOLSabCX6eot9bws" class="kpi-value sm neg" id="ledger-month-flex"><!--pnid:LiNBQ4a1ESBNhRvIZrqSSn-->¥0</div></article>
+        <article data-page-node-id="sSZw3kF2T2FQ8KgBYouCZo" class="panel"><div data-page-node-id="rDyFb8rDJEYKIlYkfNmLmO" class="kpi-label"><!--pnid:r6wIqZlf2Z3kkBCKuySm8e-->本月结余</div><div data-page-node-id="khoDxERP9G1CiWo4eIrQIt" class="kpi-value sm" id="ledger-month-net"><!--pnid:57wNb8FY96a24yuAqgmvwM-->¥0</div></article>
+      </div>
+
+      <div data-page-node-id="ALvyzH3PqsyLBZ9x0Y5CEv" class="split">
+        <article data-page-node-id="DZDbpERjaTr2KnRAiHCP2K" class="panel">
+          <div data-page-node-id="xA65o8vFOnVIZORoSsj4lO" class="kpi-head" style="margin-bottom:12px">
+            <h3 data-page-node-id="8xGOgF09IXBSLJKpSRbycK" class="panel-title" style="margin:0"><svg data-page-node-id="sydDWkxvqg85WrXK0tikSC" class="app-icon" viewBox="0 0 24 24"><use data-page-node-id="GsYsndmz59kWVr3TCfbAQw" href="#i-receipt"></use></svg><span data-page-node-id="XNnPmgy1DV5TyDyHT6YxT6" id="ledger-list-title"><!--pnid:uqWqIU4geRcJcSdO9on2Gs-->全部流水</span></h3>
+            <div data-page-node-id="n6Mxq9igvEODIVrYmrEmtL" class="segmented" id="ledger-kind-filter">
+              <button data-page-node-id="v0yrtGYid9iAgBoHsrctfv" class="active" data-kind="全部" type="button"><!--pnid:kTEdtCmDzAOBaZ6CkmOhSe-->全部</button>
+              <button data-page-node-id="DGbCG2CaOy2EhsaA3DiqaH" data-kind="支出" type="button"><!--pnid:ywlNnXysGHgEADVvCjSpFx-->支出</button>
+              <button data-page-node-id="vtoChTnuybIsXdwJ5kUQqD" data-kind="收入" type="button"><!--pnid:MXMR37YKNKkfxdZJgo86T0-->收入</button>
             </div>
-            <p class="span-full panel-note" id="ledger-result" aria-live="polite" data-page-node-id="yMm6MAno5Nm5FjGvTcl8MH"></p>
+          </div>
+          <div data-page-node-id="ZyScCiozj00aAnFVUdAFwJ" class="record-list" id="ledger-list"></div>
+        </article>
+
+        <aside data-page-node-id="6C26DwBXTu8BuTLKG6sO2B" class="panel sticker">
+          <h3 data-page-node-id="ZsrQsDCs0cnF4lsJCFysNB" class="panel-title"><svg data-page-node-id="aAdjQIjfpaZfJKM4h4oDxu" class="app-icon" viewBox="0 0 24 24"><use data-page-node-id="UKlxmDEYBn8nNuwWFaWIlG" href="#i-plus"></use></svg><span data-page-node-id="U5AJLNdGEQMsWKeRL1muxm" id="ledger-form-title"><!--pnid:CYVVKnv31DgMazTdIchwm9-->记一笔</span></h3>
+          <form data-page-node-id="WauBDdM19avgKAC8zw5iRs" class="form-grid" id="ledger-form" novalidate>
+            <input data-page-node-id="cbjKLZpX2iYcojOftQHQcR" id="ledger-editing-id" type="hidden">
+            <div data-page-node-id="EqlIbxO6dVU8zcUdpf0TU8" class="field"><label data-page-node-id="gguQH2RpRcHCeE3KyhzOpG" for="ledger-date"><!--pnid:vWMDPNhlr5ApghJlZPM2sH-->日期</label><input data-page-node-id="ZIcYUb4fmWjTysDQEwp57P" id="ledger-date" name="date" required type="date"></div>
+            <div data-page-node-id="NvFpF4EejIQmSGdpzNGE5T" class="field"><label data-page-node-id="h0vO5cTLHrCmTpIhnSBQrE" for="ledger-amount"><!--pnid:AMgjGE5PotaKNjKe3mWCih-->金额</label><input data-page-node-id="YoZk90zSMsnQpkKpacDey5" id="ledger-amount" inputmode="decimal" min="0.01" name="amount" placeholder="0.00" required step="0.01" type="number"></div>
+            <div data-page-node-id="qzMfEom4KzEQYZv7LfMsBj" class="field"><label data-page-node-id="yXNYkx4ZpQDfVH5iDtOgCP" for="ledger-kind"><!--pnid:2g9mML1voqO9PwmPwNQwvc-->收支类型</label><select data-page-node-id="hXTW4GKrvS2s3hikGxiCUz" id="ledger-kind" name="kind"><option data-page-node-id="BOxLOGBGwo49Zi4ZNnFm7m" value><!--pnid:uimxIVBaqVZjZt85eyGnK1-->请选择</option></select></div>
+            <div data-page-node-id="qV8wSseG8t343l3OrFbIu1" class="field"><label data-page-node-id="IhvVrAYWHTNzcTcnBBgxGO" for="ledger-category"><!--pnid:552PKYMCuOP1oQdlodIDey-->分类</label><select data-page-node-id="NUReuS8vIiWtWXrk0SNdth" id="ledger-category" name="category"><option data-page-node-id="OlIUgM2qinRh56sO4VRIcV" value><!--pnid:4m8BP6Zbfj388JNv7C5aSO-->请选择</option></select></div>
+            <div data-page-node-id="CUkZT3nasXt0RijigM2Xz4" class="field"><label data-page-node-id="pRx4IfhsX96AJlqEsbIwN0" for="ledger-nature"><!--pnid:kM11GL4dOI1yqmTtS7uOTU-->支出性质</label><select data-page-node-id="9quTR2PYwrwNmXkHW6o4Yw" id="ledger-nature" name="nature"><option data-page-node-id="q5ZIUXTDUDUTFKSOXnF1i0" value><!--pnid:ncHHUQNb5OUHqyv247HDPl-->请选择</option></select></div>
+            <div data-page-node-id="R7y5XN2n8CM1oi7XQlhmAu" class="field"><label data-page-node-id="7IZ3fiE5m4XaIH5fxyom17" for="ledger-owner"><!--pnid:bBaUVZXycYSTV2zYUlQf6R-->归属成员</label><select data-page-node-id="xOd10OD7MgsAwreB4BMfSV" id="ledger-owner" name="owner"><option data-page-node-id="NpBLXIjSQy72zjg2jvSKT0" value><!--pnid:CZJW7dBCW30mGnUEz8SmGs-->请选择</option></select></div>
+            <div data-page-node-id="MnoytpajUu3IHaKNY62wqc" class="field"><label data-page-node-id="67I18SCgeaC9DRBcGYJsRx" for="ledger-recorder"><!--pnid:NhOuVFNi1EzG9tS5bpKgiG-->谁记的</label><select data-page-node-id="IoKJ03ca9g2qo8DcqafE6u" id="ledger-recorder" name="recorder"><option data-page-node-id="INHoLBlRobCl7TtsjjHdla" value><!--pnid:fuimAXxo3AMV9lnlUoLQ3u-->请选择</option></select></div>
+            <div data-page-node-id="NJCnP5eXOF8EPZvmbFX9wt" class="field span-full"><label data-page-node-id="A1RjZBUZdkbH0JfcUReT3A" for="ledger-note"><!--pnid:5Okj6AvbcBXMtvbSR8BGmW-->备注</label><input data-page-node-id="idawLHxSCmCqSxiYpTIqYl" id="ledger-note" maxlength="120" name="note" placeholder="这笔花在什么上"></div>
+            <div data-page-node-id="Z81gH8yWvNIp4LO3ucYgvg" class="form-actions span-full">
+              <button data-page-node-id="TJjmg9PlaYL4apWK6OAouQ" class="primary" id="ledger-submit" type="submit"><!--pnid:rXBCydIYJi7WiJBlumsHyC-->保存</button>
+              <button data-page-node-id="x05SJrsdTBxhx18DmcfzoT" class="secondary" hidden id="ledger-cancel" type="button"><!--pnid:ZmcYOJ5MovOtDlhCFkbiTb-->取消编辑</button>
+            </div>
+            <p data-page-node-id="3NpVY1oYSqU9QlHWiBxY5B" aria-live="polite" class="span-full panel-note" id="ledger-result"></p>
           </form>
         </aside>
       </div>
 
-      <div class="split-even" data-page-node-id="R1MvBpXNPzbnlSxRSwuM14">
-        <article class="panel" data-page-node-id="mKGG1DqFT847PFY5SUoCKg">
-          <h3 class="panel-title" data-page-node-id="td3vLdbKWklIANSpTjBBDH"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="kzSmezR51VRjqfaJ2K20i5"><use href="#i-chart" data-page-node-id="AWVGrQvaDuGWxsgUgivDKJ"></use></svg><span data-page-node-id="4BbZLQlK7uGC7VW1u52Vlb">月度收入与支出总结</span></h3>
-          <div class="field" style="max-width:200px;margin-bottom:12px" data-page-node-id="uhJQFVSeGzLrqcIH2D531m">
-            <label for="month-picker" data-page-node-id="IQm5A6mvfJIcHEJUdXItsL">选择月份</label>
-            <input id="month-picker" type="month" data-page-node-id="Y7fAKF1rEmvvSs9OB52jDH">
+      <div data-page-node-id="BUgDDK6wwBf7fhGRdoVHFs" class="split-even">
+        <article data-page-node-id="Lo8zV99xuUTP87SrUMmuLV" class="panel">
+          <h3 data-page-node-id="qInFKyX8Kykke9Wy9Glcad" class="panel-title"><svg data-page-node-id="3l06mKBcvgvdXByVxVPxM5" class="app-icon" viewBox="0 0 24 24"><use data-page-node-id="uDW8M2bE0njIroMIZ1Hkx9" href="#i-chart"></use></svg><span data-page-node-id="Df9xQeFPg7gJ6rKp6HMNoi"><!--pnid:irBNkDwwbGvOWcbsteAi1P-->月度收入与支出总结</span></h3>
+          <div data-page-node-id="ods6XnTa4XJZHDxvndVDR4" class="field" style="max-width:200px; margin-bottom:12px">
+            <label data-page-node-id="Q61FSQDxf6bMv4rNoGpCXU" for="month-picker"><!--pnid:x1dT9h0nOpCB6NKbrN7Esg-->选择月份</label>
+            <input data-page-node-id="sopdOC0NeCkX7n2EOynJgS" id="month-picker" type="month">
           </div>
-          <div id="month-summary" data-page-node-id="XroCpYh2FgCgYe43E56KKy"></div>
+          <div data-page-node-id="v6vZRtQgqXZg2k1hq9bUj8" id="month-summary"></div>
         </article>
-        <article class="panel" data-page-node-id="euCFhiEHWonglr3lfvUoXe">
-          <h3 class="panel-title" data-page-node-id="NP1DUrkRfspGXCvP3cyUQX"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="u0mjBuBtsW8XG31sCK3j2u"><use href="#i-bowl" data-page-node-id="aB2cdCIVflJ9lRIm2rZ4Ld"></use></svg><span data-page-node-id="U1AvoUotQh8XPKHF9zjsVE">这个月钱去哪了</span></h3>
-          <div id="month-category-chart" data-page-node-id="kGuBJ7CCa71ni8kxODvsk3"></div>
+        <article data-page-node-id="1h8c2n5j7QWF06bCVimU5d" class="panel">
+          <h3 data-page-node-id="CuG3HtNdh2jQ1X9kBVBYzN" class="panel-title"><svg data-page-node-id="ckIV7Q7O8gGU6g04iO3aNH" class="app-icon" viewBox="0 0 24 24"><use data-page-node-id="CzyrSRYodrjLccLpAK3uOs" href="#i-bowl"></use></svg><span data-page-node-id="HFMZcJ9UQYO7Pxa6jr3DYJ"><!--pnid:Ee8jHJggUYm5C5MkzkZHGY-->这个月钱去哪了</span></h3>
+          <div data-page-node-id="637guVCsHJEqrUlW0LUkfl" id="month-category-chart"></div>
         </article>
       </div>
     </section>
 
-    <!-- ================= 自由基金 ================= -->
-    <section class="page-section" data-section="freedom" data-page-node-id="xZfEQOwT0Vyur7c8tXEiNd">
-      <div class="section-heading" data-page-node-id="a3jubcKarAmOUB14soSXYv">
-        <div data-page-node-id="UrvgSvsbHvmL6WKPvAhBqK">
-          <h2 data-page-node-id="rxAT9TRFn2rs3XWPdiIW7k">自由基金与安全垫</h2>
-          <p data-page-node-id="Nsyyl3bvUFLflkBUsxHfMz">攒钱不是为了不花钱，是为了在想走的时候走得动。目标、安全垫、存款曲线都在线上，两个人看到的是同一份进度。</p>
+    <!--pnid:86IIhx4ZIAPkV6PVWqvf6u--><!-- ================= 自由基金 ================= -->
+    <section data-page-node-id="TBk4cCuE3U8dEnyCR2HCZg" class="page-section" data-section="freedom">
+      <div data-page-node-id="KLJ4NtEbAb61f26RPXYXXO" class="section-heading">
+        <div data-page-node-id="VyJwFiUGHx5NQIbr20YurW">
+          <h2 data-page-node-id="SD4yh8xpbK2hZ0wLoJeERV"><!--pnid:979suDYQf1hA8PBY6q7uwh-->自由基金与安全垫</h2>
+          <p data-page-node-id="PLyzrXOtMqenVQZxJYCuZA"><!--pnid:kt1K6fhB0CvYwWnrHVsENd-->攒钱不是为了不花钱，是为了在想走的时候走得动。目标、安全垫、存款曲线都在线上，两个人看到的是同一份进度。</p>
         </div>
       </div>
 
-      <div class="grid three" data-page-node-id="Op8PuvCb4BhM1XHJZrCgp0">
-        <article class="panel mint" data-page-node-id="seRwTMID68ztm48YfZr6IO">
-          <div class="kpi-head" data-page-node-id="Gw5cgbT3PLYlCIQTT76xXR"><div class="kpi-label" data-page-node-id="eG27Sb13eoNRpHRKZpKB1v">当前存款</div><span class="chip-icon" data-page-node-id="yQMh1vhuOs22MwjCPC7pQY"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="XmkCAlUD5B9ilv48euWBbb"><use href="#i-coin" data-page-node-id="kUEe5YuHQojwIC4nxAsnhp"></use></svg></span></div>
-          <div class="kpi-value pos" id="fd-current" data-page-node-id="cQwA9WDvhLFl41ArSoV1wM">¥0</div>
-          <div class="kpi-note" id="fd-current-note" data-page-node-id="Yw7wUeHQAhztEzjVCnR3eY"></div>
+      <div data-page-node-id="cIFavEDwCT8pFhVrzpBEhD" class="grid three">
+        <article data-page-node-id="MMFPUhi6nk9Bajpth8qMn8" class="panel mint">
+          <div data-page-node-id="JFKXlTuhrwIVgJfeQ8vYMF" class="kpi-head"><div data-page-node-id="ClgQDVLIBe6JhkcRFomm4K" class="kpi-label"><!--pnid:4DjFRfPY4abRu6Sd6Cbzko-->当前存款</div><span data-page-node-id="kEHM1klhk88akyHbA6XZzl" class="chip-icon"><svg data-page-node-id="ieKU0Do9gws5NuYdL3L3cT" class="app-icon" viewBox="0 0 24 24"><use data-page-node-id="w2rrjWj2zNBnWKCm8G4xRV" href="#i-coin"></use></svg></span></div>
+          <div data-page-node-id="CJjHtn9jbHL5ltx3xNlu7r" class="kpi-value pos" id="fd-current"><!--pnid:je1TnP1aL9AhGvX8aBA7t4-->¥0</div>
+          <div data-page-node-id="ix69zZBArN3SphElJeoFEK" class="kpi-note" id="fd-current-note"></div>
         </article>
-        <article class="panel lemon" data-page-node-id="AemhqWssJDvwDimGnGCo8Q">
-          <div class="kpi-head" data-page-node-id="IWsKKz9FgCquz9je3Ndecp"><div class="kpi-label" data-page-node-id="ckBruiWlDWKxOCWLYoBGjd">安全垫覆盖</div><span class="chip-icon" data-page-node-id="Q1JC2UYwwnE7udgpd0Si1T"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="XAmXadtgP3urZCvBELLtaE"><use href="#i-house" data-page-node-id="ePBjzyzlXdKiHLpm3ZCmmI"></use></svg></span></div>
-          <div class="kpi-value" id="fd-buffer" data-page-node-id="Q8NxDGRSoTFek5W35md4Sg">—</div>
-          <div class="kpi-note" id="fd-buffer-note" data-page-node-id="YE7Gt3VbNGxc1PvAIrWBHT"></div>
+        <article data-page-node-id="VdQ3mY6huVbAxphQbB3ezv" class="panel lemon">
+          <div data-page-node-id="mNcQSdRldeat1fzJMLaJ1j" class="kpi-head"><div data-page-node-id="3kXBTzvJjMUMvHUa0mavTW" class="kpi-label"><!--pnid:FGqslYgamTqZejbAtwVoFl-->安全垫覆盖</div><span data-page-node-id="XUg5smVyq0OCKLZt2eCbdl" class="chip-icon"><svg data-page-node-id="D4pJG1ogLPixaOsubxhjX2" class="app-icon" viewBox="0 0 24 24"><use data-page-node-id="xXcG0HFmeojIcqYHoxitWb" href="#i-house"></use></svg></span></div>
+          <div data-page-node-id="gWDlSPQeNz1OX1P4BimsQf" class="kpi-value" id="fd-buffer"><!--pnid:LHJOU9zxX5jAf3TnidhdsS-->—</div>
+          <div data-page-node-id="MzDVH5jcvPwe39WZVoeITk" class="kpi-note" id="fd-buffer-note"></div>
         </article>
-        <article class="panel peach" data-page-node-id="UXN4JRfb3iiHmRypma6Xm6">
-          <div class="kpi-head" data-page-node-id="91jso1Iq7H2BkRAiZtxGxK"><div class="kpi-label" data-page-node-id="Hpj9ebq70X722S0BHSDSAz">按当前节奏还要</div><span class="chip-icon" data-page-node-id="teum2FAzuHkZKKoCgFUs66"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="sIznxnAwGkZ7hfmUg82puH"><use href="#i-clock" data-page-node-id="vqw1hS39DJBESCMHArYlwA"></use></svg></span></div>
-          <div class="kpi-value" id="fd-eta" data-page-node-id="NMDf8XSt3d2QpJJ2l5BohX">—</div>
-          <div class="kpi-note" id="fd-eta-note" data-page-node-id="2Y3oK28CAUkJH7heWFAJnO"></div>
+        <article data-page-node-id="CRV7T3gIQeMTrRSXwCOyQ9" class="panel peach">
+          <div data-page-node-id="clRTqSNbykCYvKbSyamJic" class="kpi-head"><div data-page-node-id="WPA79G97b8mpT64LJGE2ym" class="kpi-label"><!--pnid:sWcIxHPIbjfar1uB9EnTEr-->按当前节奏还要</div><span data-page-node-id="nPUTWOIEOotXB2QaoA2jLZ" class="chip-icon"><svg data-page-node-id="2iiJfE9X5jnKO78kASZxfd" class="app-icon" viewBox="0 0 24 24"><use data-page-node-id="UiAntKbVaRtrfKz0bgkByk" href="#i-clock"></use></svg></span></div>
+          <div data-page-node-id="8tjeguFT8oi3p6L0sMwOue" class="kpi-value" id="fd-eta"><!--pnid:Go3Bq4Q93bQSiKNEXG8Oim-->—</div>
+          <div data-page-node-id="B31j6henyWKrIOfC9m91fr" class="kpi-note" id="fd-eta-note"></div>
         </article>
       </div>
 
-      <article class="panel" data-page-node-id="DkysXIFNaEGdyp8gIOSOdR">
-        <h3 class="panel-title" data-page-node-id="eyFH0knyCMdREK5oLCoWFR"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="SeB3DLejVFwYkqVP0ToCO9"><use href="#i-target" data-page-node-id="OIZo3tJ1R133XrjLVQONWR"></use></svg><span data-page-node-id="F91aj6NmqBYFZU0CHTDJVr">自由基金进度</span></h3>
-        <div class="progress-track" data-page-node-id="07fEfT6PEnohvT9zCuy0ma"><div class="progress-fill" id="fd-bar" style="width:0%" data-page-node-id="oguvARINWUyiHTkIwg0KKq"></div></div>
-        <div id="fd-stats" style="margin-top:12px" data-page-node-id="4Oy2DD3K0ujppUzvxNzqyU"></div>
+      <article data-page-node-id="2kABsNWPhFy6wH9P3IOpqk" class="panel">
+        <h3 data-page-node-id="6r0ZRgzQTDEFf6DpkUCgJe" class="panel-title"><svg data-page-node-id="eHbNm2tBJTRW54mfOeROyr" class="app-icon" viewBox="0 0 24 24"><use data-page-node-id="S9jeY24i1TY7zl7q8ghMAd" href="#i-target"></use></svg><span data-page-node-id="oBAOJ961PwQzCdtG8ReEgg"><!--pnid:zlxBry2z3v0fMFpa58IO4c-->自由基金进度</span></h3>
+        <div data-page-node-id="J28nzYlmfhCqITIb2JEPFH" class="progress-track"><div data-page-node-id="gKudltUKJH1sobbtYDXyK8" class="progress-fill" id="fd-bar" style="width:0%"></div></div>
+        <div data-page-node-id="oTfcoWI4576zcPh88HspEr" id="fd-stats" style="margin-top:12px"></div>
       </article>
 
-      <article class="panel" data-page-node-id="gtMn5VWS1pbaFZEW52D9Vn">
-        <div class="kpi-head" style="margin-bottom:10px" data-page-node-id="A3CsNzgMgNQmypWXrp2J53">
-          <h3 class="panel-title" style="margin:0" data-page-node-id="uLx2CfNd5N74vCgGDgnbFE"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="iuImTMnxT0IjwKCLegjYYT"><use href="#i-chart" data-page-node-id="JO6B1CK6HrOP4gzDXvQbk7"></use></svg><span data-page-node-id="d2SRpN2HRG2AFynAnJwCJp">存款曲线</span></h3>
-          <span class="kpi-note" style="margin:0" data-page-node-id="poDKgK1p54Bu9t2rXwNUsu">实线 = 实际存款快照，虚线 = 按流水推算</span>
+      <article data-page-node-id="BRHJbAdIXuhmAfokMbVBf3" class="panel">
+        <div data-page-node-id="UZlHcvcMPgaUwYYLEVSI9U" class="kpi-head" style="margin-bottom:10px">
+          <h3 data-page-node-id="avu56RD3f9inxD62TjvvZt" class="panel-title" style="margin:0"><svg data-page-node-id="DQVKZJMfRElKV3AEIO2y7N" class="app-icon" viewBox="0 0 24 24"><use data-page-node-id="FontZMcXqrPnYkwLlmDDZh" href="#i-chart"></use></svg><span data-page-node-id="5FGgI1pjYVnwPNUHg6gonI"><!--pnid:Q8fUzKMEtdzyhgGmHMglGi-->存款曲线</span></h3>
+          <span data-page-node-id="a1OhR7TWRijjzMpiEZlt9K" class="kpi-note" style="margin:0"><!--pnid:N2w83nexuuraBOpSSAWw6Z-->实线 = 实际存款快照，虚线 = 按流水推算</span>
         </div>
-        <div id="savings-chart" data-page-node-id="FWLMZhQR7VsNTyA5CmpEal"></div>
+        <div data-page-node-id="T4kieKHa5aUPAxkMibkjxc" id="savings-chart"></div>
       </article>
 
-      <article class="panel caramel" data-page-node-id="jhfyQJBM1iY7Sp9VuuTEAB">
-        <div class="kpi-head" style="margin-bottom:10px" data-page-node-id="Fv6FEIxlp4FPxZLDArBEV0">
-          <h3 class="panel-title" style="margin:0" data-page-node-id="4y0Znh9UE7fk7ugQUf9hys"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="dbWMohLn0wl87AAWhBGGs4"><use href="#i-house" data-page-node-id="5RlfLbxGamY1qydcUO4oIy"></use></svg><span data-page-node-id="7xyoll1TfmDBvqu0586mOt">家庭现状（没记账也能先填）</span></h3>
-          <span class="kpi-note" style="margin:0" data-page-node-id="UHZxM2Nv9caPqAIrF4HCwo">一段时间没记流水？先把现状填上，进度立刻有数</span>
-        </div>
-        <form id="snapshot-form" class="form-grid two-cols" data-page-node-id="9Ed81RutwOLRW10yFD4iiY">
-          <div class="field" data-page-node-id="TGTGkadByaEwKdxmTjqMmB"><label for="snap-balance" data-page-node-id="qOhAOoZuL31ReOKf5xY0tB">当前存款（家里现在有多少）</label><input id="snap-balance" name="snapBalance" type="number" min="0" step="100" inputmode="decimal" placeholder="0" data-page-node-id="ZzFc5Xf8AcPHU5x2RObMDk"></div>
-          <div class="field" data-page-node-id="GXE1aSc07ty12RBbdSJWFF"><label for="snap-income" data-page-node-id="2DBgUCDBn2xpuN537Jyqbw">家庭月收入（税后合计）</label><input id="snap-income" name="snapIncome" type="number" min="0" step="100" inputmode="decimal" placeholder="0" data-page-node-id="kZqqxh7dqw1xQ4JBFPSpIe"></div>
-          <div class="field" data-page-node-id="8AHJm88BbNMFGer9LvZ7BW"><label for="snap-fixed" data-page-node-id="T6SSP7Wtj6wZJLs9jBAEOA">月固定支出（房租水电等）</label><input id="snap-fixed" name="snapFixed" type="number" min="0" step="100" inputmode="decimal" placeholder="0" data-page-node-id="HEqXI9jf4UnoHx5C8pNnba"></div>
-          <div class="field" data-page-node-id="0aG5bEWUIrMaMRC8BAf8Cc"><label for="snap-flex" data-page-node-id="zMPu3MO9Jw5EMAJBdQEDk2">月弹性支出（吃喝日用等）</label><input id="snap-flex" name="snapFlex" type="number" min="0" step="100" inputmode="decimal" placeholder="0" data-page-node-id="PEuuCCY3YmrngoEbOpJMkV"></div>
-          <button class="primary span-full" type="submit" id="snapshot-submit" data-page-node-id="npSKVFfrcVK78riExZDwyU">保存现状到线上</button>
-          <p class="span-full panel-note" id="snapshot-result" aria-live="polite" data-page-node-id="F8wKqg7eKuWEiKeYbfv04O"></p>
-        </form>
-        <p class="panel-note" id="snapshot-readout" data-page-node-id="WbTUfgZpPxCzywnaCe0F8S"></p>
-      </article>
-
-      <div class="split-even" data-page-node-id="ytlh1kPvHsffbCwInOxaO1">
-        <article class="panel sticker" data-page-node-id="sAEKg2ToK3uEff3WCZJes1">
-          <h3 class="panel-title" data-page-node-id="tknmaVJTUuzZjvDC6LiM2C"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="rKIUH0tDWeetW3SddBqajk"><use href="#i-coin" data-page-node-id="leHP49LXKDmfC5GVDQOl5a"></use></svg><span data-page-node-id="iE7fRS3VnONxcjY0LM6rEg">更新本月实际存款</span></h3>
-          <form id="saving-form" class="form-grid" data-page-node-id="ZcBG7eCeY7Wfv2wyo2jSlW">
-            <div class="field" data-page-node-id="xzRZzJX8yinXupbxv6Rg34"><label for="saving-month" data-page-node-id="hQHTQodE71CGScQdvdQ3uf">月份</label><input id="saving-month" name="savingMonth" type="month" data-page-node-id="SQhlxKgUfloyoYAc70x6jH"></div>
-            <div class="field" data-page-node-id="9BHKoKC8bfKKtJmb1Wu4qB"><label for="saving-amount" data-page-node-id="BUl0sxOlX1gfmr1tvM6pu2">这个月月底实际存款</label><input id="saving-amount" name="savingAmount" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00" required data-page-node-id="jmKV6d70lk06yoi5jAon0C"></div>
-            <button class="primary" type="submit" id="saving-submit" data-page-node-id="C2H85vgmTnvCNPhQwb8irP">写入线上表</button>
+      <div data-page-node-id="nLlpQI8Ez0prZtEGyBJQnh" class="split-even">
+        <article data-page-node-id="H3MZq4dcKdDdRGZMIAZpxc" class="panel sticker">
+          <h3 data-page-node-id="rmeJ2cr4lRWiOiCBq8rAlZ" class="panel-title"><svg data-page-node-id="H64rx9DHKVHiWqSeepicXb" class="app-icon" viewBox="0 0 24 24"><use data-page-node-id="5Oqmz05WuyUNdNH3EI97xy" href="#i-coin"></use></svg><span data-page-node-id="tITSaqFZwUF0dQky2uRXKT"><!--pnid:v1BmaW5Kb5u80boHKENph8-->更新本月实际存款</span></h3>
+          <form data-page-node-id="vOVNvwUAeyHofducVEs5Rq" class="form-grid" id="saving-form">
+            <div data-page-node-id="0gOUiFlEfeRsu8CfRAjpCj" class="field"><label data-page-node-id="k68V82aRwpwsRNMWav31SL" for="saving-month"><!--pnid:zQjsl2KRHDL99C9NGuZVSk-->月份</label><input data-page-node-id="IYlVsUTezz7OaFBMjwE1DA" id="saving-month" name="savingMonth" type="month"></div>
+            <div data-page-node-id="vl94ILnca9jAIFtUb1DlzC" class="field"><label data-page-node-id="mx6CEdLsQN8uovyTkvYGgZ" for="saving-amount"><!--pnid:kQ6ppHF9Y4UR6SnujpPEnj-->这个月月底实际存款</label><input data-page-node-id="599VeWUqXoVKs7FCBnXS9A" id="saving-amount" inputmode="decimal" min="0" name="savingAmount" placeholder="0.00" required step="0.01" type="number"></div>
+            <button data-page-node-id="u3c7kRbSAHf4H1yE5GIBnN" class="primary" id="saving-submit" type="submit"><!--pnid:MYoOWOiN6Sj8YpQ88zcM84-->写入线上表</button>
           </form>
-          <p class="panel-note" id="saving-result" aria-live="polite" data-page-node-id="Ja8S2bPKeluDpYwbhMTtPl"></p>
-          <div id="saving-history" style="margin-top:10px" data-page-node-id="DMuR1T83MOmlPHsddyA0Y0"></div>
+          <p data-page-node-id="sYcunrnVF6HRjvqj34scxj" aria-live="polite" class="panel-note" id="saving-result"></p>
+          <div data-page-node-id="0wfL5kJEtDpagec2lFivoY" id="saving-history" style="margin-top:10px"></div>
         </article>
 
-        <article class="panel" data-page-node-id="aCb3V0GhkAbc2xFPfSgswi">
-          <h3 class="panel-title" data-page-node-id="R36CumHC4nTbGpg5hJQj3l"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="ZFeT9fDFQZQH60izxWvHop"><use href="#i-spark" data-page-node-id="jdk5II6FaZ4yWMi6qYnV9u"></use></svg><span data-page-node-id="AVupOZJatNA0Mqz5GRmV1L">家庭参数</span></h3>
-          <form id="family-form" class="form-grid" data-page-node-id="Go3uN32yg7CfPgDRfAlyjV">
-            <div class="field" data-page-node-id="QGouUFjtNlDPhLohkHNWqv"><label for="fam-target" data-page-node-id="SSsb8QqbZaEqaX39f6gWVl">自由基金目标</label><input id="fam-target" name="famTarget" type="number" min="0" step="100" inputmode="decimal" data-page-node-id="4iJmGEmxECjwVshXTZGQg9"></div>
-            <div class="field" data-page-node-id="pOKHH8moqk2gpZ1cexF1rT"><label for="fam-buffer" data-page-node-id="xkAhES3GNvBC6h6jCsa8UD">安全垫要覆盖几个月</label><input id="fam-buffer" name="famBuffer" type="number" min="0" step="1" inputmode="numeric" data-page-node-id="NZmdtER0QBzreF5j3QbzWy"></div>
-            <div class="field" data-page-node-id="cKHkpNwS0PoSXxZgpsYhKJ"><label for="fam-opening" data-page-node-id="5n03HDw2w9r4OwkBbLKuOW">起始存款（开始记账那个月的月初）</label><input id="fam-opening" name="famOpening" type="number" min="0" step="100" inputmode="decimal" data-page-node-id="9LPIswqh6XPSGZOVV3uu67"></div>
-            <div class="field span-full" data-page-node-id="olYRKHo0lwKAJA6LpLXOpt"><label for="fam-reason" data-page-node-id="sxHvoALPf5euPmaVE0bdGT">自由宣言</label><textarea id="fam-reason" name="famReason" maxlength="200" placeholder="写下你们想攒这笔钱的理由"></textarea></div>
-            <button class="primary" type="submit" id="family-submit" data-page-node-id="F9LQvjVWinHPY1LnK1lJJp">保存到线上</button>
+        <article data-page-node-id="OC0qAfkAiK41vrhIwj6iwk" class="panel">
+          <h3 data-page-node-id="zRgDu4fA1c5Aw72TSRAnjY" class="panel-title"><svg data-page-node-id="NRAEJAApQrXgMMU9OJu8Pe" class="app-icon" viewBox="0 0 24 24"><use data-page-node-id="Cee1CWEETnq8SpUpvpSCMQ" href="#i-spark"></use></svg><span data-page-node-id="MSBNOICERuSvpsW7uW6EdB"><!--pnid:IuP8d9UMps4vHdAvK8Cj1F-->家庭参数</span></h3>
+          <form data-page-node-id="KGP7Awwnb0Q1ZEV7qH49gs" class="form-grid" id="family-form">
+            <div data-page-node-id="PbJHOnRAkS3z75JQFRAeQt" class="field"><label data-page-node-id="8HjJ88Pnxcpatd4i0fO122" for="fam-target"><!--pnid:LNQmFatFrcfoMpSPOVo6fC-->自由基金目标</label><input data-page-node-id="LLaOcXaps1FkkN3fYTO6Dj" id="fam-target" inputmode="decimal" min="0" name="famTarget" step="100" type="number"></div>
+            <div data-page-node-id="1WVKJ0Enxxai2C8Bie8tUo" class="field"><label data-page-node-id="PCA7Z0Ui7G9rDS3VH1fJYq" for="fam-buffer"><!--pnid:9lDVjjVQanp5iFjhqXtOSa-->安全垫要覆盖几个月</label><input data-page-node-id="Whap5pBRSnYFlWQzSyvezl" id="fam-buffer" inputmode="numeric" min="0" name="famBuffer" step="1" type="number"></div>
+            <div data-page-node-id="TijEHiR5vSZq6SpMWfGjkL" class="field"><label data-page-node-id="rdg5rt7Sauo8QX0wXAofl1" for="fam-opening"><!--pnid:BzLjQZgF8Pa9QFpk7Zghic-->起始存款（开始记账那个月的月初）</label><input data-page-node-id="KlB4eLIULPtAT9rPevuDHX" id="fam-opening" inputmode="decimal" min="0" name="famOpening" step="100" type="number"></div>
+            <div data-page-node-id="gux4MktFsxrrdMdvAaP0hP" class="field span-full"><label data-page-node-id="nJPPDW6PbThEpo5LgSZMSe" for="fam-reason"><!--pnid:4lR0qq9p3LhnCZMWZTbOlB-->自由宣言</label><textarea data-page-node-id="iLgve5DVIPfLJAtZ0tOsU8" id="fam-reason" maxlength="200" name="famReason" placeholder="写下你们想攒这笔钱的理由"></textarea></div>
+            <button data-page-node-id="DlPCaRRQiDfkuGvk0mkBD1" class="primary" id="family-submit" type="submit"><!--pnid:jet2K8sdeY51Eav5KVPphp-->保存到线上</button>
           </form>
-          <p class="panel-note" id="family-result" aria-live="polite" data-page-node-id="0ivGa7Qajh0FW9kPKIt0i9"></p>
+          <p data-page-node-id="mBaQWXprkAvDucVqno7HpM" aria-live="polite" class="panel-note" id="family-result"></p>
         </article>
       </div>
     </section>
   </main>
 </div>
 
-<nav class="tabbar" id="mobile-tabbar" data-page-node-id="65OLjB5ksoAKb8ylRGaPXE">
-  <button type="button" class="active" data-target="home" data-page-node-id="SiZygknMfsOHH93GH1BBKH"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="1rWzCImEf8SObVupDZoe6N"><use href="#i-home" data-page-node-id="uB3399D2YHzitHXwb95T45"></use></svg><span data-page-node-id="XBgEDcvoEHoDtNPfhlv0U0">今天</span></button>
-  <button type="button" data-target="hourly" data-page-node-id="ArtfHrzmAXViAb0g66LFHE"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="uMG0CzDVSUQOOjWUOvEX2s"><use href="#i-clock" data-page-node-id="mNVpFebDmEU1N6JJq2B3ir"></use></svg><span data-page-node-id="wZpbFPiWlLqLI80SdY1BnT">时薪</span></button>
-  <button type="button" data-target="ledger" data-page-node-id="eDwPTVp3DVmpcQSNcoDA0P"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="xAgQWsB5wxPRBGflygoyRL"><use href="#i-receipt" data-page-node-id="CCbbGJohVp6rWGDQXbuFpU"></use></svg><span data-page-node-id="0end9o9gE8xFYBq8tAkhS2">账本</span></button>
-  <button type="button" data-target="freedom" data-page-node-id="ZosrInv0UBAfZ8iqL3QEQN"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="y1JGAvFJBCSooC9fPindXz"><use href="#i-pig" data-page-node-id="AQwnTjmo0KoOsO9wOihuri"></use></svg><span data-page-node-id="ADDKecKISNWALYGRlfnCbC">自由</span></button>
+<nav data-page-node-id="CivlvmzSqiISHxYWMgdJF6" class="tabbar" id="mobile-tabbar">
+  <button data-page-node-id="Ci3nGCMmqYmlFqAirTgCSp" class="active" data-target="home" type="button"><svg data-page-node-id="7jJg8Hcxw1alOBlqet8EXa" class="app-icon" viewBox="0 0 24 24"><use data-page-node-id="NxYm0oIpXDTbHGNidX2Bsv" href="#i-home"></use></svg><span data-page-node-id="AwmKRmzJGYh6qg6XQ81yya"><!--pnid:2Ow77Pr85l8GvcN1AYiOIl-->今天</span></button>
+  <button data-page-node-id="Mkb4yi0hU8U2TE0Ere5NSi" data-target="hourly" type="button"><svg data-page-node-id="QNUdf97DIUn5A5cwnD8gRR" class="app-icon" viewBox="0 0 24 24"><use data-page-node-id="J2W9EIPLR3JCX4gIIRKhWc" href="#i-clock"></use></svg><span data-page-node-id="5mKXtq0J5z0w5UKqPpIqJ5"><!--pnid:K9hS9YG2G7xbSfANPSO3ia-->时薪</span></button>
+  <button data-page-node-id="dAoJlCMw085lM3kelIeSGZ" data-target="ledger" type="button"><svg data-page-node-id="s0BnrtOihcdU2KB24VlZzg" class="app-icon" viewBox="0 0 24 24"><use data-page-node-id="LdzDIUIhIW0f5ClSYpQOPu" href="#i-receipt"></use></svg><span data-page-node-id="R5SFHxExHsDpq4wl6B2QIq"><!--pnid:ueGEpXYOYqvi7MVJK1iHYo-->账本</span></button>
+  <button data-page-node-id="JPHg91gFCRsbJhevCdWsmh" data-target="freedom" type="button"><svg data-page-node-id="cZHJdhJP85bzTARNvb5tvc" class="app-icon" viewBox="0 0 24 24"><use data-page-node-id="e91UDAZCSJSI5aR9nH86J0" href="#i-pig"></use></svg><span data-page-node-id="3neG5HBGX9NoJXBiKo1StM"><!--pnid:W05R40BM0u1xEc7WFzXowk-->自由</span></button>
 </nav>
 
-<div class="toast-wrap" id="toast-wrap" data-page-node-id="DsemgBNX5TG8i6RBsN70gh"></div>
+<div data-page-node-id="T1sul2nOSCqpR9AdNSUGPx" class="toast-wrap" id="toast-wrap"></div>
 
-<div class="modal-backdrop" id="connect-modal" hidden data-page-node-id="8UI5tQk1hXFAexwtcPQVSn">
-  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="connect-title" data-page-node-id="a8DhgVKDtCef2f56LglZcA">
-    <div class="modal-head" data-page-node-id="HiPka3LPYSNTSrsJZWaVG6">
-      <h3 id="connect-title" data-page-node-id="eZbAYvgQAW4HzG5UDEdryl"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="wcEkNzwX848KHK7U9zEvlo"><use href="#i-cloud" data-page-node-id="I3C2Qbi7GwoVM7DAkBBBY9"></use></svg><span data-page-node-id="TyALHkPHtIsJaWZH57lm6W">连接线上数据</span></h3>
-      <button class="modal-close" id="connect-close" type="button" aria-label="关闭" data-page-node-id="keDc1pQ6whzF1ImyABQsH3">&times;</button>
+<div data-page-node-id="W9HrmFabJuk7GaqDGozncp" class="modal-backdrop" hidden id="connect-modal">
+  <div data-page-node-id="s8KOkLk3IUCbsRLhXk2LHs" aria-labelledby="connect-title" aria-modal="true" class="modal-card" role="dialog">
+    <div data-page-node-id="dfkKuDJ2tSAcNUBzDTS2Sg" class="modal-head">
+      <h3 data-page-node-id="ovPyAjip133RBroNywFrwE" id="connect-title"><svg data-page-node-id="KsojD7j64AEYjjHHP4l1bn" class="app-icon" viewBox="0 0 24 24"><use data-page-node-id="TsdDLw2hOwiEWDlgQUTaoo" href="#i-cloud"></use></svg><span data-page-node-id="qQCPK7W48lrH1AdeiHzO39"><!--pnid:uYLpo3OS0bTnVRIhGpCLPb-->连接线上数据</span></h3>
+      <button data-page-node-id="3YCfDVQbyt8faeRS4fOaUo" aria-label="关闭" class="modal-close" id="connect-close" type="button"><!--pnid:nKz529C6Ds9lrTQW9VQJHV-->&times;</button>
     </div>
-    <p class="modal-note" id="connect-intro" data-page-node-id="BxwzFP0rqsXcbjFES7vjoI">
+    <p data-page-node-id="RJMN5TIjl9opTbu4tYmFdX" class="modal-note" id="connect-intro"><!--pnid:RthlrMgTZDnTuIBrTMIkDM-->
       在资料库里打开本页会自动走内置数据表，不用填任何东西。部署到 GitHub Pages 这类静态托管时，内置能力拿不到，需要接一个外部数据库才能读写——填一次就永久生效，配置只存在这台设备的浏览器里。
     </p>
 
-    <div class="conn-field" data-page-node-id="8hws4YDAlTlv0fIHuoOpIz">
-      <label for="conn-mode" data-page-node-id="3XFTFQbtdmDssHlhxAG32W">数据源</label>
-      <select id="conn-mode" data-page-node-id="boNuO8FuXbIQPkuMWmXj0G">
-        <option value="auto" data-page-node-id="E118HTTFTizu921q1dshDT">自动检测（推荐）</option>
-        <option value="supabase" data-page-node-id="6p3owgR3a4IFuxdEmvDOdc">Supabase（接外部数据库）</option>
-        <option value="local" data-page-node-id="JegJxF3yJAW4a6xVB5M1Ij">仅本机浏览器（不同步）</option>
+    <div data-page-node-id="ztA9E0QBK7rFjrzzk2H1GY" class="conn-field">
+      <label data-page-node-id="7ig3AzuMwLXH3xI2xScTlE" for="conn-mode"><!--pnid:5eM0rUMIh0ohkuNG3EClz2-->数据源</label>
+      <select data-page-node-id="jxCl7hRVPtTwRzsgXozuwB" id="conn-mode">
+        <option data-page-node-id="jn2cr9RaxrPCmD3Q8Ch7Fu" value="auto"><!--pnid:zGO93k8KxBcEtYMivLvtki-->自动检测（推荐）</option>
+        <option data-page-node-id="YQaKc2HiKdXmnF87IV12Qo" value="supabase"><!--pnid:clqF2xND774MiAdLJvWIzx-->Supabase（接外部数据库）</option>
+        <option data-page-node-id="MIeSOboW3cttKkj7oRlsHg" value="local"><!--pnid:p22AAnTnRd27UhHESXcLst-->仅本机浏览器（不同步）</option>
       </select>
-      <span class="hint" data-page-node-id="s5qUDHE5qhRGu6ffeFGvPS">选「自动」时：检测到资料库环境就用内置数据表，否则用已保存的 Supabase 配置。</span>
+      <span data-page-node-id="d6Ust9gKT2u6XUU07K5nxq" class="hint"><!--pnid:6JSjyEfluaZiXFJF88w2c0-->选「自动」时：检测到资料库环境就用内置数据表，否则用已保存的 Supabase 配置。</span>
     </div>
 
-    <div id="supabase-fields" data-page-node-id="rUwM9U7ZFjyLDes5Dskw2H">
-      <div class="conn-field" data-page-node-id="zT9eW92aDJltkkfRTlppvX">
-        <label for="conn-url" data-page-node-id="l4Lu4DFSQYP0ynF8zYRqog">Supabase 项目 URL</label>
-        <input id="conn-url" type="url" inputmode="url" autocomplete="off" placeholder="https://abcdefgh.supabase.co" data-page-node-id="rXPNkTZza0XmhugBuahmdn">
+    <div data-page-node-id="7o5RN52LEMpKy8pWF0xw6F" id="supabase-fields">
+      <div data-page-node-id="uaQIhrVoHvCsXwCR4c6a0m" class="conn-field">
+        <label data-page-node-id="qXwQzGkmRygbW7WU5yUuJ2" for="conn-url"><!--pnid:JGddkSQifRBLPKNu6K15gL-->Supabase 项目 URL</label>
+        <input data-page-node-id="ddc2CQeVtz3nf8zCpLyXUq" autocomplete="off" id="conn-url" inputmode="url" placeholder="https://abcdefgh.supabase.co" type="url">
       </div>
-      <div class="conn-field" data-page-node-id="4DVAMAMdOWxO1mncQ5ZbhF">
-        <label for="conn-key" data-page-node-id="CUea9ZIvwdDvVgbDzNiDP7">anon public key</label>
-        <input id="conn-key" type="text" autocomplete="off" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6..." data-page-node-id="ZWqaJHZJez3CYvrBStIMKb">
-        <span class="hint" data-page-node-id="OMcokks1kFfD9KghCFSDoI">Settings → API → Project API keys → anon public</span>
+      <div data-page-node-id="q1yjllL1ilXlbC0uFfnyGR" class="conn-field">
+        <label data-page-node-id="NyEZ7a8KZI786rQUR58n5Y" for="conn-key"><!--pnid:64EDbVzdRCNSoAvrYPIBlH-->anon public key</label>
+        <input data-page-node-id="NIPaNJYSW6Sqqs7BOGK9pY" autocomplete="off" id="conn-key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6..." type="text">
+        <span data-page-node-id="cab5nKpzkyknwbJnYiy6Vm" class="hint"><!--pnid:GdEPeIaRdnBbhEiWhTZKXF-->Settings → API → Project API keys → anon public</span>
       </div>
-      <div class="conn-field" data-page-node-id="N8xOTBNctioBHhIeg6scQp">
-        <label for="conn-email" data-page-node-id="4Q5khI0Z2Q12Fo0GCQfbpI">登录邮箱</label>
-        <input id="conn-email" type="email" autocomplete="username" placeholder="你注册 Supabase 用的邮箱" data-page-node-id="I6PDJQczMjVplWiii2pZtp">
+      <div data-page-node-id="uoeZFyp5DQ7AxX0yEk5AQZ" class="conn-field">
+        <label data-page-node-id="1gWmkSz7Cf0FAmzuv6VcTU" for="conn-email"><!--pnid:0mFoDWGr0McZcIKhJB5Vnt-->登录邮箱</label>
+        <input data-page-node-id="uK13iMm4XdZ7RgZMZ4n6XU" autocomplete="username" id="conn-email" placeholder="你注册 Supabase 用的邮箱" type="email">
       </div>
-      <div class="conn-field" data-page-node-id="GIz0LOQsynijRnwGhFcsFt">
-        <label for="conn-password" data-page-node-id="SFEwbSAKD1ASbnORZB3AFN">登录密码</label>
-        <input id="conn-password" type="password" autocomplete="current-password" placeholder="只发给 Supabase，不落任何第三方" data-page-node-id="Hd1b2B5fEAc65TSYDBcLTB">
+      <div data-page-node-id="fcEqt1XqJydj4bx45wHeTL" class="conn-field">
+        <label data-page-node-id="P0TuHSWoy7V8Q6XJ3q7TJq" for="conn-password"><!--pnid:gi6lQ0e58UtJyfWZ3AqotX-->登录密码</label>
+        <input data-page-node-id="nfP9U6O5GJbg5uUUVdJUzW" autocomplete="current-password" id="conn-password" placeholder="只发给 Supabase，不落任何第三方" type="password">
       </div>
+      <div data-page-node-id="sBMpbjjadL9mQR6xYMcQUt" class="otp-divider"><!--pnid:b3nTHWewa84wmNPPvChh75-->邮箱验证码登录（不用点邮件里的链接）</div>
+      <div data-page-node-id="6tpGzb2cAGfViHZYP0vsnS" class="otp-row">
+        <input data-page-node-id="92wHfCwT11BtvsmnyO1hd9" id="conn-otp-email" placeholder="登录邮箱（留空则用上面填的邮箱）" type="email">
+        <button data-page-node-id="h5Ns5SVUvSlsA08nGyuYNQ" class="otp-btn" id="conn-otp-send" type="button"><!--pnid:6jH4CoTY45aaitXKnHrlC3-->发送验证码</button>
+      </div>
+      <div data-page-node-id="GuFkpzQDaahlr9sL4yKLdD" class="otp-row">
+        <input data-page-node-id="YhUfo6gHYr9FxReRh4d8aS" id="conn-otp-code" inputmode="numeric" maxlength="6" placeholder="6 位邮箱验证码" type="text">
+        <button data-page-node-id="aPLzPSeU2WSiZUlXaqfF6Z" class="otp-btn primary" id="conn-otp-login" type="button"><!--pnid:Awk1JRMoTwpzwN9aYDXGoZ-->验证码登录</button>
+      </div>
+      <span data-page-node-id="WHi9wa79Gnt2IILerLQk5h" class="hint"><!--pnid:vz6EsWs3kTo2HbAQnXN02A-->邮箱验证链接打不开、或提示「邮箱未验证」时，用这组最稳：验证码直接发到你邮箱，在本页输入即可，顺便把没验证的邮箱一并激活。</span>
     </div>
 
-    <div class="conn-status" id="conn-status" hidden data-page-node-id="oaef4wcoKDfY90PkceLFdd"></div>
+    <div data-page-node-id="cbTrJnw7MloMbi0UStLUBN" class="conn-status" hidden id="conn-status"></div>
 
-    <div class="modal-actions" data-page-node-id="xV3lMWqIHAqxa7mCVfsmvn">
-      <button id="conn-save" type="button" data-page-node-id="jO1c9O47fRQIE5npytsksW">保存并连接</button>
-      <button id="conn-test" class="ghost" type="button" data-page-node-id="ZU5rWI3k8RM4XlcwKPAoQ0">测试连接</button>
-      <button id="conn-logout" class="ghost" type="button" data-page-node-id="B6JZShqimEVfAFe0UEkwSE">退出登录</button>
-      <button id="conn-cancel" class="ghost" type="button" data-page-node-id="wTB2mUeEpwQ4Nc4j2TOASX">关闭</button>
+    <div data-page-node-id="fngmD43mpfAwLnu7cdmSlD" class="modal-actions">
+      <button data-page-node-id="2u4DaN3xY58GYUVPU6yQqO" id="conn-save" type="button"><!--pnid:grfwtQLWpXeCFiPqa5yJbZ-->保存并连接</button>
+      <button data-page-node-id="3LDZqH3Z07EA83Ntm4ZQGv" class="ghost" id="conn-test" type="button"><!--pnid:sedLdaPFmmpIEin0hbhKLh-->测试连接</button>
+      <button data-page-node-id="XhY6nDSbU708L1PEeXCuSb" class="ghost" id="conn-logout" type="button"><!--pnid:KbUMrzL1FCxvwAbggSloje-->退出登录</button>
+      <button data-page-node-id="iIAA1qAdVyNf20M5Zu3QQO" class="ghost" id="conn-cancel" type="button"><!--pnid:4HtWxNjIBg6apGlsh4xxZg-->关闭</button>
     </div>
 
-    <div class="conn-drive" data-page-node-id="6TTc2vNYiLXEEwQmaocYRn"><svg viewBox="0 0 24 24" class="app-icon sm" data-page-node-id="OSqBvBAXbt3JIwcwrg4cSh"><use href="#i-key" data-page-node-id="XnEkXPRzTrs6cAooxEc9iZ"></use></svg><span id="conn-current" data-page-node-id="IDp30BIMzEOuIYX3CQAlNX">当前数据源：检测中…</span></div>
+    <div data-page-node-id="Fsc2tlHczrUWIxTQXXTEUw" class="conn-drive"><svg data-page-node-id="X5vQcZEXkoGnPx1FEwCjvI" class="app-icon sm" viewBox="0 0 24 24"><use data-page-node-id="WvUSxhvn7GX2dYITHtqWVU" href="#i-key"></use></svg><span data-page-node-id="dZKAW83d7sqTaSHafpmLs8" id="conn-current"><!--pnid:vWY5WGUvLpNboakNz7El62-->当前数据源：检测中…</span></div>
   </div>
 </div>
 
-<!-- ================= 登录 / 注册门禁（仅 Supabase 模式出现） ================= -->
-<div class="auth-gate" id="auth-gate" hidden data-page-node-id="6KDHUqGdF79kDfIf9eDJVf">
-  <div class="auth-card" data-page-node-id="vJ4cvTUftoI1s5zzbEeYGU">
-    <div class="auth-brand" data-page-node-id="wtTDkEhRr0d2g0KGeWm2F3">
-      <div class="brand-mark" data-page-node-id="gi43TRt7Ji8PI3Oyp4uHXV"><svg viewBox="0 0 24 24" class="app-icon lg" data-page-node-id="iYJbMabtU8868fgFGKG5Te"><use href="#i-pig" data-page-node-id="UW8hMyaTtUVclrGs7AUnuY"></use></svg></div>
-      <div data-page-node-id="qRcLDaRtLgVwbAGSyiv7mW">
-        <h1 data-page-node-id="vcek5wuA9dLC78iD5smKun">虎宅小账本</h1>
-        <p data-page-node-id="GWcMxB3idYmsIye5FEFitB">登录后，一家人看到同一本账</p>
-      </div>
-    </div>
-
-    <div id="auth-step-login" data-page-node-id="t474Ozi1ATxRv1IN3kAKhv">
-      <div class="auth-tabs" data-page-node-id="NPG33QXbQMBMewNnTnLdDQ">
-        <button type="button" id="auth-tab-login" class="active" data-page-node-id="gYXURnb1wDMH4hFTBVBW3w">登录</button>
-        <button type="button" id="auth-tab-register" data-page-node-id="VmYRgFe0j9F41yHosd0B2g">注册</button>
-      </div>
-      <form id="auth-login-form" class="auth-form" novalidate data-page-node-id="oTAmOXCZ7oRYdk4QPRVIWL">
-        <div class="field" data-page-node-id="wuycodPAKjEk9ORDe3i8Ci"><label for="auth-login-email" data-page-node-id="laDDHxYJr2BDIxWT69CsZM">邮箱</label><input id="auth-login-email" type="email" autocomplete="username" placeholder="you@example.com" data-page-node-id="sFCpJPLbiaxHaLcElVmnqp"></div>
-        <div class="field" data-page-node-id="GcPIkCErLoFr78mdMl8e3H"><label for="auth-login-password" data-page-node-id="5SBVopG1qA7xeKZQINbeWk">密码</label><input id="auth-login-password" type="password" autocomplete="current-password" placeholder="你的密码" data-page-node-id="ZVzR2exMnQaKr0SjgK2mnx"></div>
-        <div class="auth-actions" data-page-node-id="NCorKFfaszOT2HDeIcnHvR"><button class="primary" type="submit" data-page-node-id="lo1uBEc7TdJgwjZ3nljfNE">登录</button></div>
-      </form>
-      <form id="auth-register-form" class="auth-form" hidden novalidate data-page-node-id="sfi0KWKUYSH9FbrMK8zghO">
-        <div class="field" data-page-node-id="LZfodCj99UqqLaDv0yYFKV"><label for="auth-reg-email" data-page-node-id="2QvSjQkXYMUQij2b5O0zls">邮箱</label><input id="auth-reg-email" type="email" autocomplete="username" placeholder="you@example.com" data-page-node-id="Br2Ug7Z3rebtE68HM7Iycr"></div>
-        <div class="field" data-page-node-id="Gz1nnhznpKN7oNTwH3W1L4"><label for="auth-reg-name" data-page-node-id="oMyeSpcvA6YqfOSXVAFpeQ">昵称（给家人看）</label><input id="auth-reg-name" type="text" maxlength="20" placeholder="比如：c" data-page-node-id="XE3inZaBoMXTn1brxuovDI"></div>
-        <div class="field" data-page-node-id="g3U93FBzsHcFESbywW5ovf"><label for="auth-reg-password" data-page-node-id="XOdOFQbZUltzNFf8ZlBcgS">密码</label><input id="auth-reg-password" type="password" autocomplete="new-password" minlength="6" placeholder="至少 6 位" data-page-node-id="vbDIJnK7cztX6ygC8V0xFv"></div>
-        <div class="auth-actions" data-page-node-id="Je6DpA5ch6fHLSO28obyLR"><button class="primary" type="submit" data-page-node-id="0L6SMKcUGXv7EUZ9CqVUjQ">注册并继续</button></div>
-      </form>
-      <div class="auth-error" id="auth-error" data-page-node-id="pxWGDRxwg39ydUGW53Qp9F"></div>
-      <div class="auth-success" id="auth-success" data-page-node-id="VDTYaj3C3QnIcPvGwWMk10"></div>
-      <p class="auth-note" data-page-node-id="kmuaHSREcmzX65iPuQoiGO">邮箱和密码只发给数据库做登录校验，不存本机明文。换设备用同一个邮箱登录，看到同一份账。</p>
-    </div>
-
-    <div id="auth-step-household" hidden data-page-node-id="eaTFN08RxLuQo2lDfJ4BqH">
-      <h3 style="margin-bottom:4px" data-page-node-id="Pm36EHGRarAgRYoiNbbjDr">先有个「家」</h3>
-      <p style="font-size:12.5px;color:var(--ink-soft);margin-bottom:14px" data-page-node-id="TocSOEn0ARG3GbczINB1E0">一个家庭 = 一本账。你可以新建一个家，或者填家人的邀请码加入。</p>
-      <div class="household-options" data-page-node-id="QmYR7zaFohIjYOImZgCQzi">
-        <div class="opt" data-page-node-id="t6wE1R7sA0PFFp1T28aXUq">
-          <h4 data-page-node-id="ukYX5mZVQkXMULjuZ1lNis"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="7OsFVD90F4wgDgyezaGSUr"><use href="#i-house" data-page-node-id="95dFedjBVSjfCBGRGvMaOI"></use></svg><span data-page-node-id="jN6zyaeyPauTnB4DpsguTJ">创建新家庭</span></h4>
-          <p data-page-node-id="PLB1cyvXJ7VFm1Ursp1Ra6">你是记账的第一人。创建后会生成一个邀请码，发给家人，对方注册时填码即可看到同一本账。</p>
-          <input id="hh-name" type="text" maxlength="20" placeholder="家庭名（默认：虎宅）" data-page-node-id="g3gaFlQXag3Fqvb4Pf28vL">
-          <button class="primary" type="button" id="hh-create" style="width:100%" data-page-node-id="6W5zNeHsskU6mbqMT8nmow">创建家庭</button>
-        </div>
-        <div class="opt" data-page-node-id="IZ605863QFfzrsNdqgJaDr">
-          <h4 data-page-node-id="kLphZx0YVbBhtL0npe8xve"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="urDpqXJhN0BOweFzjbOfp9"><use href="#i-key" data-page-node-id="XLkwuQVBpkJJipQD0TAlL7"></use></svg><span data-page-node-id="i2C5I9Z4Zx7LHINmgCO3Ir">用邀请码加入</span></h4>
-          <p data-page-node-id="wr83qcsfW3DgAfxiNqTTtq">已经收到家人的邀请码（HUZHAI-XXXXXX）？填进去直接加入，看到同一份数据。</p>
-          <input id="hh-code" type="text" maxlength="20" placeholder="HUZHAI-XXXXXX" style="text-transform:uppercase" data-page-node-id="5emX5k1CEqW2pphGaU7BSH">
-          <button class="primary" type="button" id="hh-join" style="width:100%" data-page-node-id="kK8nq9pP8fEM3dCyEuBtrD">加入家庭</button>
-        </div>
-      </div>
-      <div class="auth-error" id="hh-error" data-page-node-id="mciDR4C26HXPxNaNOsz5EY"></div>
-      <p class="auth-note" data-page-node-id="KKvlf2hleN4SRQWe9aTBWD">已有账号但没收到邀请码？让家里第一位成员打开「家庭与成员」把码发给你。</p>
-    </div>
-
-    <p class="auth-note" data-page-node-id="pNjM7EODng0pFTc97pVf2N"><a href="#" id="auth-open-connect" style="color:var(--mint-deep);text-decoration:none;font-weight:700" data-page-node-id="Ps2kvmc9AlTJogEISJYv8s">数据没接上？点这里配置数据库</a></p>
-  </div>
-</div>
-
-<!-- ================= 家庭与成员 ================= -->
-<div class="modal-backdrop" id="family-modal" hidden data-page-node-id="XF1w6HgF3BCWGzlewcE0Ew">
-  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="family-title" data-page-node-id="balBmTcOvDJn6QupyDlDRM">
-    <div class="modal-head" data-page-node-id="eV7fJwu7kULlCYfHyCv8SQ">
-      <h3 id="family-title" data-page-node-id="4uMrLh8aYQgWyXeZmqXVby"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="MUHftH9EPuUIILCkwIp3Px"><use href="#i-house" data-page-node-id="GC6xJGA6ErvkRiDt4ZHYFP"></use></svg><span data-page-node-id="ZQ7FYH3jfTxMBHZ87xIQAw">家庭与成员</span></h3>
-      <button class="modal-close" id="family-close" type="button" aria-label="关闭" data-page-node-id="Ut71LPL5R7XGm0PDG0MTVs">&times;</button>
-    </div>
-    <p class="modal-note" id="family-note" data-page-node-id="Am1kPq8G4JqvqPXHwNVz84">把这个邀请码发给家人，对方注册时填上就能加入同一本账。</p>
-    <div class="invite-code" id="family-invite-wrap" hidden data-page-node-id="yaiaGGIuWXUEsQPIX2b1KB"><strong id="family-invite" data-page-node-id="zyD9GDw4sFh06NE6gPduxP">—</strong><button id="family-copy" type="button" data-page-node-id="nIBRpgHbQSgszkRKNEazB6">复制邀请码</button></div>
-    <div class="member-list" id="family-members" data-page-node-id="W47Um8QyGygH6EgUCUdkx6"></div>
-    <div class="modal-actions" style="margin-top:14px" data-page-node-id="YyDXpE0x0rndcaXQuZRIeF">
-      <button id="family-logout" class="ghost" type="button" data-page-node-id="jBPjW7xNA5N9yXIQBOycRX">退出登录</button>
-      <button id="family-close2" class="ghost" type="button" data-page-node-id="VBqXqEvVwtQJwGMxYx3wBW">关闭</button>
-    </div>
-  </div>
-</div>
-
-<!-- ================= 隐私说明 ================= -->
-<div class="modal-backdrop" id="privacy-modal" hidden data-page-node-id="VuXO8W7Y5yUcHDZ1nII2bk">
-  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="privacy-title" data-page-node-id="CcaWN8AYTJuWkzYGVz9OLD">
-    <div class="modal-head" data-page-node-id="Xfry1koIfqiH9L4UsNlQ9l">
-      <h3 id="privacy-title" data-page-node-id="98ASbH43P4E7LI0IpVx8t9"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="V1Qx3BwLLQL7hDRNbclLBw"><use href="#i-key" data-page-node-id="R3DmZYvreOg3ZE3VkcQoM6"></use></svg><span data-page-node-id="TBTZD0gk07PKq6CIJzs2bY">隐私说明</span></h3>
-      <button class="modal-close" id="privacy-close" type="button" aria-label="关闭" data-page-node-id="o7FYpy4Z4LtEABiZLMSAlj">&times;</button>
-    </div>
-    <div class="privacy-list" data-page-node-id="ZcL94SFsBwfrWQotinrUSL">
-      <div class="privacy-item" data-page-node-id="0CTHAkBapDWZGwuBAUGuBO"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="wEdnURK4gyV4LqzwPARB20"><use href="#i-house" data-page-node-id="8hoGHKn0u4ODdJuQnI78uO"></use></svg><span data-page-node-id="5TNG2KiiSOPYvzM6BEzCLF"><strong data-page-node-id="vD2Ds92RiJZnR6o2imi86D">数据不在网页里。</strong> GitHub 上只是空壳页面，账目数据存在你自己的数据库里，网页源代码里没有任何账目、也没有密钥。</span></div>
-      <div class="privacy-item" data-page-node-id="GiyMv4lbYs1LycTmp4UrYc"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="bpkMobZ9PkkVAzx8HvV3D3"><use href="#i-key" data-page-node-id="tlmKeIThr2ErEfrRmTYM5e"></use></svg><span data-page-node-id="ZfgkRY9naBe1YSlq4hr1jx"><strong data-page-node-id="fFQgRgTr2hI7aioZHdAFcl">三道围栏。</strong> ① 登录墙：没登录只看到登录页；② 邀请码：就算注册了，没有你家邀请码也进不来；③ 行级安全：数据库端强制只放行同一家庭的数据，别人家一条都读不到。</span></div>
-      <div class="privacy-item" data-page-node-id="EJtPIhDJkTe2rqRRE78Z00"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="iV5wI4s99P4QSFMjgQwGWL"><use href="#i-cloud" data-page-node-id="yCvdYYWeq17mCYMEUF9sW3"></use></svg><span data-page-node-id="uzU92uF2NJ9V1JuY8DG6FX"><strong data-page-node-id="CUxOMdyOpJ09MDmPHe6yIr">密钥是公开的、无害的。</strong> anon key 是数据库的公开身份标识，本身不解锁任何数据，真正的锁在登录 + 行级安全。所以它写在仓库里也不泄露隐私。</span></div>
-      <div class="privacy-item" data-page-node-id="Od218zKeIjU1s8twc5Zxiv"><svg viewBox="0 0 24 24" class="app-icon" data-page-node-id="luODxdIYd1CBkQy7mOCVD4"><use href="#i-check" data-page-node-id="Ex84Uh2E8TmNPaKcEaqyDF"></use></svg><span data-page-node-id="5vFFI2hdy8VTTCbBCchIYt"><strong data-page-node-id="AL1CjXRLdX3uqrzaqkZDI6">密码不经本页留存。</strong> 登录凭证只发给数据库换取临时令牌，令牌存在你自己的浏览器里，登出即失效。</span></div>
-    </div>
-    <div class="modal-actions" data-page-node-id="2IcpRoDuCrXgH9LS3GpzZo"><button id="privacy-ok" class="primary" type="button" style="width:100%" data-page-node-id="kbnbV5OVLhhqr7lGbTC7Tu">知道了</button></div>
-  </div>
-</div>
-
-<script>
+<script data-page-node-id="iZKLmN8DRvLGoXMxQu41Yu" data-pnid-children="uNlz1qR4FY0vKrVJtqStUc">
 (function () {
   'use strict';
 
@@ -984,21 +828,7 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
   var SMART_DB = (window.__SMART_PAGE__ && window.__SMART_PAGE__.database) || null;
   var db = null;                        // 运行时选定的数据源，统一接口，业务层无感
   var DRIVE = 'local';                  // 'smart'（资料库内置） | 'supabase' | 'local'（本机兜底）
-  var lastBootState = '';               // 最近一次启动的数据源状态（严格模式下必须显式声明）
   var SCHEMA_OPTIONS = {};        // { "字段名": [{text,id}] }
-  // 静态内置选项：脚本启动即生效，不依赖网络与 schema 加载顺序。
-  // 线上 schema 加载成功后会覆盖合并（选项以服务端为准）。
-  (function seedStaticSchemaOptions() {
-    var cats = EXPENSE_CATS.slice();
-    INCOME_CATS.forEach(function (c) { if (cats.indexOf(c) === -1) cats.push(c); });
-    var mk = function (arr) { return arr.map(function (t) { return { text: t, id: t }; }); };
-    SCHEMA_OPTIONS['收支类型'] = mk(['收入', '支出']);
-    SCHEMA_OPTIONS['分类'] = mk(cats);
-    SCHEMA_OPTIONS['支出性质'] = mk(['固定支出', '弹性支出', '不计']);
-    SCHEMA_OPTIONS['归属成员'] = mk(MEMBERS.concat(['共同', '猫咪']));
-    SCHEMA_OPTIONS['记录人'] = mk(MEMBERS);
-    SCHEMA_OPTIONS['归属'] = mk(MEMBERS.concat(['家庭']));
-  })();
   var state = {
     rows: [],                     // 流水
     settings: [],                 // 设置行
@@ -1011,8 +841,7 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
     hourlyView: 'both',
     scenarioMember: 'c',
     editingId: '',
-    monthKey: '',
-    profile: null                 // Supabase 模式下「我是谁 + 我在哪个家」
+    monthKey: ''
   };
 
   /* ============ 工具 ============ */
@@ -1585,8 +1414,7 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
           .catch(function (err) {
             console.error('[database] 设置保存失败:', err);
             setSync('error', '保存失败');
-            var msg = String((err && err.message) || err || '').slice(0, 140);
-            showAlert('error', '「' + parts[1] + '」没能写回线上数据表' + (msg ? '：' + msg : '，请点重试。'), function () { onMemberFieldChange(input); });
+            showAlert('error', '「' + parts[1] + '」没能写回线上数据表，请点重试。', function () { onMemberFieldChange(input); });
           });
       });
     });
@@ -2086,7 +1914,6 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
     renderMonthSummary();
     renderCategoryChart();
     renderFreedom();          // 内部单向调用 renderSavingsChart / renderSavingHistory
-    renderSnapshot();         // 家庭现状补录卡（没流水也能先填）
     updateTodayLabel();
   }
 
@@ -2112,10 +1939,6 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
   ==================================================================== */
   var LS_CONN = 'wb_huzhai_conn_v1';
   var LS_LOCAL = 'wb_huzhai_local_v1';
-  // 固化配置：把 Supabase 的 Project URL 和 anon key 填到这里后，
-  // 任何人打开网址直接就是登录页，不用自己配数据库。
-  // （anon key 是公开身份标识，本身不解锁数据，真正的锁是登录 + 行级安全，见「隐私说明」）
-  var BUILTIN_SUPA = { url: 'https://zyoggbzbwciykzwefwaw.supabase.co', key: 'sb_publishable_rf1XocyfO89tFzYEJpUsJA_8uy5Gv7u' };
   var SUPA_TABLE = {
     'mTUiqfjLxVrYNdnm7JaBvY': 'huzhai_ledger',
     'V7eiezQ7mkFmevgdXrap4B': 'huzhai_settings'
@@ -2157,13 +1980,7 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
   }
 
   function loadConn() {
-    var c = null;
-    try { c = JSON.parse(localStorage.getItem(LS_CONN) || 'null'); } catch (e) { c = null; }
-    if (!c) c = {};
-    // 固化的 URL / key 作为默认，本地填过的优先（允许个人覆盖）
-    if (!c.url && BUILTIN_SUPA.url) c.url = BUILTIN_SUPA.url;
-    if (!c.key && BUILTIN_SUPA.key) c.key = BUILTIN_SUPA.key;
-    return c;
+    try { return JSON.parse(localStorage.getItem(LS_CONN) || 'null'); } catch (e) { return null; }
   }
   function saveConn(patch) {
     var c = loadConn() || {};
@@ -2207,7 +2024,6 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
     var cbs = [];
     var timer = null;
     var fp = '';
-    var live = { started: false, ws: null, hb: null, pollTimer: null, ref: 0 };
 
     function headers(extra) {
       var h = { 'apikey': key, 'Content-Type': 'application/json' };
@@ -2285,67 +2101,6 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
       });
     }
 
-    /* 实时推送：Realtime WebSocket 为主，5 秒轮询兜底 */
-    function startLive() {
-      if (live.started) return;
-      live.started = true;
-      try { openRealtime(); } catch (e) { startPolling(); }
-    }
-    function notifyLive() {
-      cbs.forEach(function (f) { f({ databaseIds: ['mTUiqfjLxVrYNdnm7JaBvY', 'V7eiezQ7mkFmevgdXrap4B'] }); });
-    }
-    function startPolling() {
-      if (live.pollTimer) return;
-      live.pollTimer = setInterval(function () {
-        fingerprint().then(function (now) {
-          if (fp === '') { fp = now; return; }
-          if (now !== fp) { fp = now; notifyLive(); }
-        }).catch(function () { /* 轮询失败静默 */ });
-      }, 5000);
-    }
-    function openRealtime() {
-      if (typeof WebSocket === 'undefined') { startPolling(); return; }
-      var wsUrl = base.replace(/^http/, 'ws').replace(/\/+$/, '') + '/realtime/v1/websocket?apikey=' + encodeURIComponent(key) + '&vsn=1.0.0';
-      var ws;
-      try { ws = new WebSocket(wsUrl); } catch (e) { startPolling(); return; }
-      live.ws = ws;
-      ws.onopen = function () {
-        ['huzhai_ledger', 'huzhai_settings'].forEach(function (t) {
-          try {
-            ws.send(JSON.stringify({
-              topic: 'realtime:public:' + t,
-              event: 'phx_join',
-              payload: {
-                config: { postgres_changes: [{ event: '*', schema: 'public', table: t }] },
-                access_token: token
-              },
-              ref: String(++live.ref)
-            }));
-          } catch (e) { /* noop */ }
-        });
-        live.hb = setInterval(function () {
-          try { ws.send(JSON.stringify({ topic: 'phoenix', event: 'heartbeat', payload: {}, ref: 'hb' })); } catch (e) { /* noop */ }
-        }, 30000);
-      };
-      ws.onmessage = function (ev) {
-        var m;
-        try { m = JSON.parse(ev.data); } catch (e) { return; }
-        if (m && m.event === 'postgres_changes') {
-          touch();
-          notifyLive();
-        }
-      };
-      ws.onerror = function () { teardownLive(); startPolling(); };
-      ws.onclose = function () { teardownLive(); startPolling(); };
-    }
-    function teardownLive() {
-      if (live.hb) { clearInterval(live.hb); live.hb = null; }
-      if (live.ws) {
-        try { live.ws.onopen = null; live.ws.onmessage = null; live.ws.onerror = null; live.ws.onclose = null; live.ws.close(); } catch (e) { /* noop */ }
-        live.ws = null;
-      }
-    }
-
     return {
       name: 'supabase',
       query: function (p) {
@@ -2381,14 +2136,20 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
       getSchema: function (p) { return Promise.resolve(buildSupaSchema()[p.databaseId] || { properties: [] }); },
       onUpdated: function (cb) {
         if (cbs.indexOf(cb) === -1) cbs.push(cb);
-        startLive();
+        if (timer) return;
+        timer = setInterval(function () {
+          fingerprint().then(function (now) {
+            if (fp === '') { fp = now; return; }
+            if (now !== fp) {
+              fp = now;
+              cbs.forEach(function (f) { f({ databaseIds: ['mTUiqfjLxVrYNdnm7JaBvY', 'V7eiezQ7mkFmevgdXrap4B'] }); });
+            }
+          }).catch(function () { /* 轮询失败静默，不影响主流程 */ });
+        }, 20000);
       },
       _dispose: function () {
-        teardownLive();
-        if (live.pollTimer) { clearInterval(live.pollTimer); live.pollTimer = null; }
         if (timer) { clearInterval(timer); timer = null; }
         cbs = [];
-        live.started = false;
       }
     };
   }
@@ -2457,71 +2218,24 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
     return SMART_DB ? 'smart' : 'need-config';
   }
 
-  /* ---------- Supabase 账号与家庭（Auth） ---------- */
-  function supaBase() { return loadConn() || {}; }
-  function supaAuthHeaders(cfg) {
-    return { 'apikey': cfg.key, 'Content-Type': 'application/json' };
+  function netErrMsg(err) {
+    var msg = String((err && err.message) || err || '');
+    if (err && (err.name === 'TypeError' || /failed to fetch|networkerror|load failed|timed? out/i.test(msg))) {
+      return '连不上数据库：网址打不开或网络不可达。请检查 Supabase 项目是否还在运行（免费项目一周不活跃会被暂停，需到控制台 Restore），国内网络访问 supabase.co 也可能不稳定，可换个网络再试。';
+    }
+    return msg;
   }
-  function supaAuthFail(res, text) {
-    var msg = text;
-    try { var j = JSON.parse(text); msg = j.msg || j.error_description || j.message || j.hint || text; } catch (e) { /* noop */ }
-    return new Error(String(msg).slice(0, 220));
+  function mapAuthErr(msg) {
+    var m = String(msg || '');
+    if (/not confirmed|email_not_confirmed/i.test(m)) {
+      return '这个邮箱还没完成验证：不用点邮件里的链接，直接点上方「发送验证码」，用验证码登录一次即可激活';
+    }
+    if (/invalid login credentials/i.test(m)) return '邮箱或密码不对，检查后再试（新账号也可能是因为邮箱还没验证，可改用验证码登录）';
+    if (/user not found|user does not exist/i.test(m)) return 'Supabase 里还没有这个邮箱的账号：让管理员到 Authentication → Users → Add user 建一个（勾选 Auto Confirm User 可免邮箱验证），再试';
+    if (/signups not allowed/i.test(m)) return '这个 Supabase 项目关闭了新用户注册：让管理员到 Authentication → Sign In / Providers → Email 打开 Allow new users to sign up';
+    if (/rate limit|too many requests/i.test(m)) return '验证码发送太频繁，等一分钟再试';
+    return m;
   }
-  function supaSignUp(email, password, displayName) {
-    var cfg = supaBase();
-    return fetch(cfg.url + '/auth/v1/signup', {
-      method: 'POST',
-      headers: supaAuthHeaders(cfg),
-      body: JSON.stringify({ email: email, password: password, data: { display_name: displayName } })
-    }).then(function (res) {
-      return res.text().then(function (t) {
-        if (!res.ok) throw supaAuthFail(res, t);
-        return t ? JSON.parse(t) : {};
-      });
-    }).then(function (j) {
-      if (!j.access_token) {
-        // 开了邮箱确认时只返回 user、没有 token
-        throw new Error('注册请求已受理，但需要先到邮箱里点确认链接（或让管理员在 Supabase 里关掉邮箱确认）。');
-      }
-      saveConn({ email: email, token: j.access_token, refresh: j.refresh_token || '' });
-      return j;
-    });
-  }
-  function supaSignIn(email, password) {
-    return supaLogin({ url: supaBase().url, key: supaBase().key, email: email, password: password, mode: supaBase().mode || 'auto' });
-  }
-  function supaGetUser() {
-    var cfg = supaBase();
-    if (!cfg.token) return Promise.resolve(null);
-    return fetch(cfg.url + '/auth/v1/user', {
-      method: 'GET',
-      headers: { 'apikey': cfg.key, 'Authorization': 'Bearer ' + cfg.token }
-    }).then(function (res) {
-      if (!res.ok) return null;
-      return res.text().then(function (t) { try { return JSON.parse(t); } catch (e) { return null; } });
-    }).catch(function () { return null; });
-  }
-  function supaRpc(fn, params) {
-    var cfg = supaBase();
-    var h = { 'apikey': cfg.key, 'Content-Type': 'application/json' };
-    if (cfg.token) h['Authorization'] = 'Bearer ' + cfg.token;
-    return fetch(cfg.url + '/rest/v1/rpc/' + fn, {
-      method: 'POST',
-      headers: h,
-      body: JSON.stringify(params || {})
-    }).then(function (res) {
-      if (!res.ok) {
-        return res.text().then(function (t) { throw supaAuthFail(res, t); });
-      }
-      return res.text().then(function (t) {
-        if (!t || t === 'null' || t === '') return null;
-        try { return JSON.parse(t); } catch (e) { return null; }
-      });
-    });
-  }
-  function myProfile() { return supaRpc('my_profile', {}); }
-  function createHousehold(name) { return supaRpc('create_household', { p_name: name || '虎宅' }); }
-  function joinHousehold(code) { return supaRpc('join_household_by_code', { p_code: code }); }
 
   function supaLogin(cfg) {
     var base = String(cfg.url || '').replace(/\/+$/, '');
@@ -2529,12 +2243,12 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
       method: 'POST',
       headers: { 'apikey': cfg.key, 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: cfg.email, password: cfg.password })
-    }).then(function (res) {
+    }).catch(function (e) { throw new Error(netErrMsg(e)); }).then(function (res) {
       if (!res.ok) {
         return res.text().then(function (t) {
           var msg = t;
-          try { var j = JSON.parse(t); msg = j.error_description || j.message || j.msg || t; } catch (e) { /* noop */ }
-          throw new Error('登录失败：' + String(msg).slice(0, 200));
+          try { var j = JSON.parse(t); msg = j.error_description || j.message || j.msg || j.hint || t; } catch (e) { /* noop */ }
+          throw new Error('登录失败：' + mapAuthErr(String(msg).slice(0, 200)));
         });
       }
       return res.json();
@@ -2545,287 +2259,100 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
     });
   }
 
-  /* ---------- 登录 / 注册门禁（AuthGate，仅 Supabase 模式） ---------- */
-  function showAuthGate(step) {
-    var gate = $('#auth-gate');
-    if (gate) gate.hidden = false;
-    setAuthStep(step || 'login');
-    clearAuthMsg();
+  /* ---------- 邮箱验证码登录（免点邮件链接） ---------- */
+  function otpCommon() {
+    return {
+      url: String(($('#conn-url') || {}).value || '').trim().replace(/\/+$/, ''),
+      key: String(($('#conn-key') || {}).value || '').trim(),
+      email: String(($('#conn-otp-email') || {}).value || '').trim() || String(($('#conn-email') || {}).value || '').trim()
+    };
   }
-  function hideAuthGate() {
-    var gate = $('#auth-gate');
-    if (gate) gate.hidden = true;
+  function otpPreflight(c) {
+    if (!/^https:\/\/[a-zA-Z0-9.-]+$/.test(c.url)) { setConnStatus('bad', '项目 URL 格式不对，应该长这样：https://abcdefgh.supabase.co'); return false; }
+    if (!c.key) { setConnStatus('bad', 'anon public key 不能为空'); return false; }
+    if (!c.email) { setConnStatus('bad', '先填登录邮箱'); return false; }
+    return true;
   }
-  function setAuthStep(step) {
-    var login = $('#auth-step-login');
-    var hh = $('#auth-step-household');
-    if (!login || !hh) return;
-    var isLogin = step !== 'household';
-    login.hidden = !isLogin;
-    hh.hidden = isLogin;
-    if (isLogin) setAuthTab('login');
-  }
-  function setAuthTab(tab) {
-    var loginBtn = $('#auth-tab-login');
-    var regBtn = $('#auth-tab-register');
-    var loginForm = $('#auth-login-form');
-    var regForm = $('#auth-register-form');
-    if (!loginBtn || !regBtn) return;
-    var isLogin = tab === 'login';
-    loginBtn.classList.toggle('active', isLogin);
-    regBtn.classList.toggle('active', !isLogin);
-    if (loginForm) loginForm.hidden = !isLogin;
-    if (regForm) regForm.hidden = isLogin;
-    clearAuthMsg();
-  }
-  function setAuthError(msg) {
-    var el = $('#auth-error');
-    if (!el) return;
-    if (msg) { el.textContent = msg; el.classList.add('show'); }
-    else { el.textContent = ''; el.classList.remove('show'); }
-  }
-  function setAuthSuccess(msg) {
-    var el = $('#auth-success');
-    if (!el) return;
-    if (msg) { el.textContent = msg; el.classList.add('show'); }
-    else { el.textContent = ''; el.classList.remove('show'); }
-  }
-  function setHhError(msg) {
-    var el = $('#hh-error');
-    if (!el) return;
-    if (msg) { el.textContent = msg; el.classList.add('show'); }
-    else { el.textContent = ''; el.classList.remove('show'); }
-  }
-  function clearAuthMsg() { setAuthError(''); setAuthSuccess(''); setHhError(''); }
-
-  // 登录/注册/建家/加入成功后，看有没有家庭，决定下一步
-  function afterAuth() {
-    setAuthSuccess('');
-    myProfile().then(function (prof) {
-      if (!prof || !prof.household_id) {
-        setAuthStep('household');
-        return;
-      }
-      state.profile = prof;
-      hideAuthGate();
-      toast('欢迎，' + (prof.display_name || prof.email || '家人'), 'ok');
-      reconnect();
-    }).catch(function (err) {
-      setAuthError(String((err && err.message) || err));
-    });
-  }
-
-  function submitAuthLogin(e) {
-    e.preventDefault();
-    var email = String($('#auth-login-email').value || '').trim();
-    var pwd = $('#auth-login-password').value;
-    if (!email || !pwd) { setAuthError('把邮箱和密码都填上'); return; }
-    clearAuthMsg();
-    setAuthSuccess('正在登录…');
-    supaSignIn(email, pwd).then(function () {
-      setAuthSuccess('登录成功，正在读取家庭信息…');
-      afterAuth();
-    }).catch(function (err) {
-      setAuthError(String((err && err.message) || err));
-      setAuthSuccess('');
-    });
-  }
-
-  function submitAuthRegister(e) {
-    e.preventDefault();
-    var email = String($('#auth-reg-email').value || '').trim();
-    var name = String($('#auth-reg-name').value || '').trim();
-    var pwd = $('#auth-reg-password').value;
-    if (!email || pwd.length < 6) { setAuthError('邮箱要填，密码至少 6 位'); return; }
-    clearAuthMsg();
-    setAuthSuccess('正在注册…');
-    supaSignUp(email, pwd, name || '').then(function () {
-      setAuthSuccess('注册成功，正在创建你的家庭档案…');
-      afterAuth();
-    }).catch(function (err) {
-      setAuthError(String((err && err.message) || err));
-      setAuthSuccess('');
-    });
-  }
-
-  function submitHouseholdCreate() {
-    var name = String($('#hh-name').value || '').trim() || '虎宅';
-    setHhError('');
-    createHousehold(name).then(function () {
-      afterAuth();
-    }).catch(function (err) {
-      setHhError(String((err && err.message) || err));
-    });
-  }
-  function submitHouseholdJoin() {
-    var code = String($('#hh-code').value || '').trim();
-    if (!code) { setHhError('把邀请码填上（HUZHAI-XXXXXX）'); return; }
-    setHhError('');
-    joinHousehold(code).then(function () {
-      afterAuth();
-    }).catch(function (err) {
-      setHhError(String((err && err.message) || err));
-    });
-  }
-
-  // Supabase 模式下启动前校验：凭证有效 + 已加入家庭
-  function authCheck(cb) {
-    supaGetUser().then(function (user) {
-      if (!user) {
-        saveConn({ token: '', refresh: '' });
-        setSync('offline', '待登录');
-        showAuthGate('login');
-        cb(false);
-        return;
-      }
-      return myProfile().then(function (prof) {
-        if (!prof || !prof.household_id) {
-          setSync('offline', '待加入家庭');
-          showAuthGate('household');
-          cb(false);
-          return;
-        }
-        state.profile = prof;
-        cb(true);
-      });
-    }).catch(function () {
-      setSync('offline', '待登录');
-      showAuthGate('login');
-      cb(false);
-    });
-  }
-
-  /* ---------- 家庭与成员 ---------- */
-  function openFamily() {
-    renderFamily();
-    var m = $('#family-modal');
-    if (m) m.hidden = false;
-  }
-  function closeFamily() {
-    var m = $('#family-modal');
-    if (m) m.hidden = true;
-  }
-  function renderFamily() {
-    var note = $('#family-note');
-    var wrap = $('#family-invite-wrap');
-    var box = $('#family-members');
-    if (DRIVE !== 'supabase') {
-      if (note) note.textContent = '当前数据源不需要登录，也就没有「家庭与成员」。接上外部数据库后这里会显示家庭邀请码。';
-      if (wrap) wrap.hidden = true;
-      if (box) box.innerHTML = '';
-      return;
-    }
-    if (note) note.textContent = '把这个邀请码发给家人，对方注册时填上就能加入同一本账。';
-    myProfile().then(function (prof) {
-      if (!prof || !prof.household_id) {
-        if (wrap) wrap.hidden = true;
-        if (box) box.innerHTML = '';
-        if (note) note.textContent = '你还没加入任何家庭，先去创建或加入一个。';
-        return;
-      }
-      if ($('#family-invite')) $('#family-invite').textContent = prof.invite_code || '—';
-      if (wrap) wrap.hidden = !prof.invite_code;
-      var members = prof.members || [];
-      if (box) {
-        box.innerHTML = '';
-        if (!members.length) { box.appendChild(emptyBlock('还没有成员')); return; }
-        members.forEach(function (m) {
-          var div = document.createElement('div');
-          div.className = 'member-row';
-          var initial = String(m.name || m.email || '?').trim().charAt(0).toUpperCase();
-          var isSelf = !!(m.email && prof.email && m.email === prof.email);
-          div.innerHTML = '<div class="avatar">' + esc(initial) + '</div>' +
-            '<div class="m-info"><strong>' + esc(m.name || '未命名') + '</strong><span>' + esc(m.email || '') + '</span></div>' +
-            (isSelf ? '<span class="m-badge">我</span>' : '');
-          box.appendChild(div);
+  function supaSendOtp() {
+    var c = otpCommon();
+    if (!otpPreflight(c)) return;
+    setConnStatus('', '正在发送验证码…');
+    fetch(c.url + '/auth/v1/otp', {
+      method: 'POST',
+      headers: { 'apikey': c.key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: c.email, create_user: true })
+    }).catch(function (e) { throw new Error(netErrMsg(e)); }).then(function (res) {
+      if (!res.ok) {
+        return res.text().then(function (t) {
+          var msg = t;
+          try { var j = JSON.parse(t); msg = j.error_description || j.message || j.msg || j.hint || t; } catch (e) { /* noop */ }
+          throw new Error('验证码发送失败：' + mapAuthErr(String(msg).slice(0, 200)));
         });
       }
-    }).catch(function () {
-      if (wrap) wrap.hidden = true;
-      if (box) box.innerHTML = '';
-      if (note) note.textContent = '家庭信息读取失败，请重试。';
+      return res.json().catch(function () { return {}; });
+    }).then(function () {
+      startOtpCountdown();
+      setConnStatus('ok', '验证码已发到 ' + c.email + '（没收到看下垃圾箱，约 1 分钟内到达），填到下面点「验证码登录」');
+      if ($('#conn-otp-code')) $('#conn-otp-code').focus();
+    }).catch(function (err) { setConnStatus('bad', String((err && err.message) || err)); });
+  }
+  function otpVerifyOnce(c, code, type) {
+    return fetch(c.url + '/auth/v1/verify', {
+      method: 'POST',
+      headers: { 'apikey': c.key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: type, token: code, refresh_token: '' })
+    }).catch(function (e) { throw new Error(netErrMsg(e)); }).then(function (res) {
+      if (!res.ok) {
+        return res.text().then(function (t) {
+          var msg = t;
+          try { var j = JSON.parse(t); msg = j.error_description || j.message || j.msg || j.hint || t; } catch (e) { /* noop */ }
+          var err = new Error(String(msg));
+          err.retryableType = /invalid|expired|token|type|not found|no such/i.test(String(msg));
+          throw err;
+        });
+      }
+      return res.json();
     });
   }
-  function copyInvite() {
-    var code = $('#family-invite') ? $('#family-invite').textContent : '';
-    if (!code || code === '—') { toast('还没有邀请码', 'bad'); return; }
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(code).then(function () { toast('邀请码已复制', 'ok'); })
-        .catch(function () { fallbackCopy(code); });
-    } else { fallbackCopy(code); }
-  }
-  function fallbackCopy(text) {
-    var ta = document.createElement('textarea');
-    ta.value = text;
-    ta.style.position = 'fixed';
-    ta.style.opacity = '0';
-    document.body.appendChild(ta);
-    ta.focus(); ta.select();
-    try { document.execCommand('copy'); toast('邀请码已复制', 'ok'); }
-    catch (e) { toast('手动复制：' + text, 'ok'); }
-    document.body.removeChild(ta);
-  }
-
-  /* ---------- 家庭现状补录（没流水也能先填） ---------- */
-  var SNAPSHOT_KEYS = [
-    { id: 'snap-balance', key: '家庭现状·当前存款', note: '家里现在总共的存款' },
-    { id: 'snap-income', key: '家庭现状·月收入', note: '家庭税后月收入合计' },
-    { id: 'snap-fixed', key: '家庭现状·月固定支出', note: '房租水电等跑不掉的部分' },
-    { id: 'snap-flex', key: '家庭现状·月弹性支出', note: '吃喝日用等可调的部分' }
-  ];
-  function renderSnapshot() {
-    var bal = getSettingNum('家庭', '家庭现状·当前存款', 0);
-    var income = getSettingNum('家庭', '家庭现状·月收入', 0);
-    var fixed = getSettingNum('家庭', '家庭现状·月固定支出', 0);
-    var flex = getSettingNum('家庭', '家庭现状·月弹性支出', 0);
-    SNAPSHOT_KEYS.forEach(function (s) {
-      var el = $(s.id);
-      var v = getSettingNum('家庭', s.key, 0);
-      if (el && !isFocused(el) && !el.value) el.value = v || '';
-    });
-    var readout = $('#snapshot-readout');
-    if (!readout) return;
-    if (!bal && !income && !fixed && !flex) {
-      readout.textContent = '还没填。填一次，即使之后没记流水，自由基金的进度和安全垫也能算出来。';
-      return;
-    }
-    var expense = fixed + flex;
-    var net = income - expense;
-    var target = getSettingNum('家庭', '自由基金目标', 0);
-    var buffer = getSettingNum('家庭', '安全垫月数', 6);
-    var pct = target > 0 ? Math.min(100, bal / target * 100) : 0;
-    var parts = [];
-    if (income) parts.push('月结余约 ' + money(net));
-    if (expense) parts.push('月开销约 ' + money(expense) + '（安全垫需 ' + money(expense * buffer) + '）');
-    if (target > 0) parts.push('自由基金已达成 ' + pct.toFixed(1) + '%');
-    readout.textContent = '按你填的现状：' + parts.join('，') + '。';
-  }
-  function submitSnapshot(e) {
-    e.preventDefault();
-    var btn = $('#snapshot-submit');
-    btn.disabled = true; btn.textContent = '保存中…';
-    Promise.all(SNAPSHOT_KEYS.map(function (s) {
-      return upsertSetting('家庭', s.key, $(s.id).value, '', s.note);
-    })).then(function () {
-      toast('家庭现状已存到线上', 'ok');
-      $('#snapshot-result').textContent = '已写回线上数据表，换设备打开也是这份。';
-      return reloadAll();
-    }).catch(function (err) {
-      console.error('[database] 家庭现状保存失败:', err);
-      showAlert('error', '家庭现状没保存成功，点重试。', function () {
-        var f = $('#snapshot-form'); var evt = document.createEvent('Event'); evt.initEvent('submit', true, true); f.dispatchEvent(evt);
+  function supaVerifyOtp() {
+    var c = otpCommon();
+    var code = String(($('#conn-otp-code') || {}).value || '').replace(/\s+/g, '');
+    if (!otpPreflight(c)) return;
+    if (!/^\d{6}$/.test(code)) { setConnStatus('bad', '验证码是 6 位数字，填好再点「验证码登录」'); return; }
+    setConnStatus('', '正在校验验证码…');
+    var types = ['magiclink', 'signup', 'email'];
+    var chain = Promise.reject(null);
+    types.forEach(function (type) {
+      chain = chain.catch(function (prevErr) {
+        if (prevErr && prevErr.retryableType === false) throw prevErr;
+        return otpVerifyOnce(c, code, type).catch(function (err) {
+          err.retryableType = err.retryableType !== false && types.indexOf(type) < types.length - 1;
+          throw err;
+        });
       });
-    }).then(function () { btn.disabled = false; btn.textContent = '保存现状到线上'; });
+    });
+    chain.then(function (j) {
+      if (!j || !j.access_token) throw new Error('验证码校验通过但没拿到凭证，请重试');
+      saveConn({ url: c.url, key: c.key, email: c.email, mode: ($('#conn-mode') || {}).value || 'auto', token: j.access_token, refresh: j.refresh_token || '' });
+      return testConn(true);
+    }).then(function (msg) {
+      setConnStatus('ok', '验证码登录成功，' + msg + ' 正在载入数据…');
+      setTimeout(function () { closeConnect(); reconnect(); }, 400);
+    }).catch(function (err) {
+      if (!err) return;
+      setConnStatus('bad', '验证码校验没通过：' + String((err && err.message) || err).slice(0, 200));
+    });
   }
-
-  /* ---------- 隐私说明 ---------- */
-  function openPrivacy() {
-    var m = $('#privacy-modal');
-    if (m) m.hidden = false;
-  }
-  function closePrivacy() {
-    var m = $('#privacy-modal');
-    if (m) m.hidden = true;
+  function startOtpCountdown() {
+    var btn = $('#conn-otp-send');
+    if (!btn) return;
+    var left = 60;
+    btn.disabled = true;
+    var t = setInterval(function () {
+      left--;
+      if (left <= 0 || !document.body.contains(btn)) { clearInterval(t); btn.disabled = false; btn.textContent = '发送验证码'; return; }
+      btn.textContent = '已发送(' + left + 's)';
+    }, 1000);
   }
 
   /* ---------- 连接设置弹窗 ---------- */
@@ -2861,6 +2388,10 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
     if ($('#conn-key')) $('#conn-key').value = c.key || '';
     if ($('#conn-email')) $('#conn-email').value = c.email || '';
     if ($('#conn-password')) $('#conn-password').value = '';
+    if ($('#conn-otp-email')) $('#conn-otp-email').value = '';
+    if ($('#conn-otp-code')) $('#conn-otp-code').value = '';
+    var otpSendBtn = $('#conn-otp-send');
+    if (otpSendBtn) { otpSendBtn.disabled = false; otpSendBtn.textContent = '发送验证码'; }
     setConnStatus('', '');
     toggleSupaFields();
     updateConnLabel();
@@ -2869,11 +2400,6 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
   function closeConnect() {
     var m = $('#connect-modal');
     if (m) m.hidden = true;
-    // 如果是从登录墙点进来的「配置数据库」，取消后还没登录就回到登录墙
-    var c = loadConn() || {};
-    if (DRIVE === 'supabase' && c.url && c.key && !c.token) {
-      showAuthGate('login');
-    }
   }
   function testConn(silent) {
     var conn = loadConn() || {};
@@ -2920,7 +2446,7 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
         setConnStatus('ok', '连接成功，' + msg + ' 正在载入数据…');
         setTimeout(function () { closeConnect(); reconnect(); }, 400);
       })
-      .catch(function (err) { setConnStatus('bad', String((err && err.message) || err)); });
+      .catch(function (err) { setConnStatus('bad', netErrMsg(err)); });
   }
   function logoutConn() {
     var c = loadConn() || {};
@@ -3418,17 +2944,18 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
       setConnStatus('', '正在测试连接…');
       testConn()
         .then(function (msg) { setConnStatus('ok', msg); })
-        .catch(function (err) { setConnStatus('bad', String((err && err.message) || err)); });
+        .catch(function (err) { setConnStatus('bad', netErrMsg(err)); });
+    });
+    $('#conn-otp-send').addEventListener('click', supaSendOtp);
+    $('#conn-otp-login').addEventListener('click', supaVerifyOtp);
+    $('#conn-otp-code').addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') supaVerifyOtp();
     });
     $('#connect-modal').addEventListener('click', function (e) {
       if (e.target === $('#connect-modal')) closeConnect();
     });
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') {
-        if (!$('#connect-modal').hidden) closeConnect();
-        if (!$('#family-modal').hidden) closeFamily();
-        if (!$('#privacy-modal').hidden) closePrivacy();
-      }
+      if (e.key === 'Escape' && !$('#connect-modal').hidden) closeConnect();
     });
     $('#export-button').addEventListener('click', exportJson);
     $('#mobile-export-button').addEventListener('click', exportJson);
@@ -3439,43 +2966,6 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
       if (e.target.files && e.target.files[0]) importJson(e.target.files[0]);
       e.target.value = '';
     });
-
-    // ---- 登录 / 注册门禁 ----
-    $('#auth-tab-login').addEventListener('click', function () { setAuthTab('login'); });
-    $('#auth-tab-register').addEventListener('click', function () { setAuthTab('register'); });
-    $('#auth-login-form').addEventListener('submit', submitAuthLogin);
-    $('#auth-register-form').addEventListener('submit', submitAuthRegister);
-    $('#hh-create').addEventListener('click', submitHouseholdCreate);
-    $('#hh-join').addEventListener('click', submitHouseholdJoin);
-    $('#auth-open-connect').addEventListener('click', function (e) {
-      e.preventDefault();
-      // 不关闭登录墙：弹窗叠在门禁之上，配置完保存后 boot() 会重新校验并回到登录墙
-      var cm = $('#connect-modal');
-      if (cm) cm.classList.add('above-gate');
-      openConnect();
-    });
-
-    // ---- 家庭与成员 / 隐私说明 ----
-    $('#family-button').addEventListener('click', openFamily);
-    $('#family-close').addEventListener('click', closeFamily);
-    $('#family-close2').addEventListener('click', closeFamily);
-    $('#family-copy').addEventListener('click', copyInvite);
-    $('#family-logout').addEventListener('click', function () {
-      closeFamily();
-      logoutConn();
-    });
-    $('#family-modal').addEventListener('click', function (e) {
-      if (e.target === $('#family-modal')) closeFamily();
-    });
-    $('#privacy-button').addEventListener('click', openPrivacy);
-    $('#privacy-close').addEventListener('click', closePrivacy);
-    $('#privacy-ok').addEventListener('click', closePrivacy);
-    $('#privacy-modal').addEventListener('click', function (e) {
-      if (e.target === $('#privacy-modal')) closePrivacy();
-    });
-
-    // ---- 家庭现状补录 ----
-    $('#snapshot-form').addEventListener('submit', submitSnapshot);
 
     $$('#ledger-filter button').forEach(function (b) {
       b.addEventListener('click', function () {
@@ -3548,7 +3038,6 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
   /* ============ 启动 ============ */
   function boot() {
     clearAlert();
-    fillSelectOptions();                // 选项静态内置，先于一切网络请求填充
     refreshAll();                       // 先渲染界面骨架，不等数据
     restoreFormCache();
 
@@ -3557,36 +3046,13 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
     updateConnLabel();
 
     if (st === 'need-login') {
-      // Supabase 已配好但还没有登录：直接上登录墙
       state.offline = true;
       setSync('offline', '待登录');
-      showAuthGate('login');
+      showAlert('warn', '数据库地址已经填好了，但还没有登录。点「重新连接」打开连接设置，填邮箱密码登录一次就能读写——密码只发给数据库，不会保存在本机。', function () { openConnect(); });
+      fillSelectOptions();
       return;
     }
 
-    if (st === 'supabase') {
-      // 有凭证也要先校验身份 + 家庭归属，再决定进主界面还是进引导
-      setSync('loading', '校验中');
-      authCheck(function (ok) {
-        if (!ok) return;   // authCheck 内部已显示对应门禁
-        hideAuthGate();
-        loadAndRender(st);
-      });
-      return;
-    }
-
-    // smart / local / need-config 走原逻辑
-    loadAndRender(st);
-  }
-
-  function loadAndRender(st) {
-    // 兜底闸：Supabase 模式下没有登录凭证，一律弹回登录墙，不允许匿名读写
-    if (st === 'supabase' && !(loadConn() || {}).token) {
-      state.offline = true;
-      setSync('offline', '待登录');
-      showAuthGate('login');
-      return;
-    }
     setSync('loading', '读取中');
     Promise.all([
       db.getSchema({ databaseId: 'mTUiqfjLxVrYNdnm7JaBvY' }),
