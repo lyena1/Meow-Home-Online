@@ -984,6 +984,7 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
   var SMART_DB = (window.__SMART_PAGE__ && window.__SMART_PAGE__.database) || null;
   var db = null;                        // 运行时选定的数据源，统一接口，业务层无感
   var DRIVE = 'local';                  // 'smart'（资料库内置） | 'supabase' | 'local'（本机兜底）
+  var lastBootState = '';               // 最近一次启动的数据源状态（严格模式下必须显式声明）
   var SCHEMA_OPTIONS = {};        // { "字段名": [{text,id}] }
   // 静态内置选项：脚本启动即生效，不依赖网络与 schema 加载顺序。
   // 线上 schema 加载成功后会覆盖合并（选项以服务端为准）。
